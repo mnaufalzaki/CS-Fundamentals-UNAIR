@@ -139,7 +139,3 @@ The CSV file is derived from the UCI Credit Card Default dataset. The converted 
 - imbalanced-learn
 - Plotly
 - SQLite
-
-## Team
-
-Add team member names here before final submission.

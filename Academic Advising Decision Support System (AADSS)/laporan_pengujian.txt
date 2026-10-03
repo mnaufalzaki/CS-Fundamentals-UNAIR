@@ -1,0 +1,34 @@
+test_dashboard_and_periods (test_app.AppTestCase.test_dashboard_and_periods) ... 2026-10-02 10:27:24.466 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_guidelines (test_app.AppTestCase.test_guidelines) ... 2026-10-02 10:27:26.276 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_manual_valid_invalid_first_and_cross_cohort (test_app.AppTestCase.test_manual_valid_invalid_first_and_cross_cohort) ... 2026-10-02 10:27:26.432 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_perwalian_and_invalid_krs (test_app.AppTestCase.test_perwalian_and_invalid_krs) ... 2026-10-02 10:27:26.640 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_search_resets_page (test_app.AppTestCase.test_search_resets_page) ... 2026-10-02 10:27:26.988 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_status_filters_and_search (test_app.AppTestCase.test_status_filters_and_search) ... 2026-10-02 10:27:27.405 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bad_data_rejected (test_rules.RulesTest.test_bad_data_rejected) ... ok
+test_checkpoint4_timing (test_rules.RulesTest.test_checkpoint4_timing) ... ok
+test_checkpoint8_timing (test_rules.RulesTest.test_checkpoint8_timing) ... ok
+test_d_boundary (test_rules.RulesTest.test_d_boundary) ... ok
+test_dataset_equals_manual (test_rules.RulesTest.test_dataset_equals_manual) ... ok
+test_dataset_validation (test_rules.RulesTest.test_dataset_validation) ... ok
+test_generator_reproducible (test_rules.RulesTest.test_generator_reproducible) ... ok
+test_invalid_input (test_rules.RulesTest.test_invalid_input) ... ok
+test_ips_boundaries (test_rules.RulesTest.test_ips_boundaries) ... ok
+test_krs_boundary (test_rules.RulesTest.test_krs_boundary) ... ok
+test_latest_data_not_leaked (test_rules.RulesTest.test_latest_data_not_leaked) ... ok
+test_precision (test_rules.RulesTest.test_precision) ... ok
+test_projection (test_rules.RulesTest.test_projection) ... ok
+test_retake_and_manual_math (test_rules.RulesTest.test_retake_and_manual_math) ... ok
+test_study_limit (test_rules.RulesTest.test_study_limit) ... ok
+test_unverified_conditions_explicit (test_rules.RulesTest.test_unverified_conditions_explicit) ... ok
+test_zero_and_first (test_rules.RulesTest.test_zero_and_first) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 7.202s
+
+OK

@@ -1,0 +1,23 @@
+{
+  "target_sks": 144,
+  "semester_normal": 8,
+  "semester_maksimum": 14,
+  "minimum_ipk": 2.0,
+  "maksimum_proporsi_d": 0.2,
+  "evaluasi": [{"semester": 4, "minimum_sks": 40}, {"semester": 8, "minimum_sks": 80}],
+  "batas_krs": [{"ips_max": 1.99, "sks": 15}, {"ips_max": 2.50, "sks": 18}, {"ips_max": 3.00, "sks": 20}, {"ips_max": 4.00, "sks": 24}],
+  "bobot_nilai": {"A": 4.0, "AB": 3.5, "B": 3.0, "BC": 2.5, "C": 2.0, "D": 1.0},
+  "sumber": {
+    "pedoman": "Pedoman-Pendidikan-FST-2024-2025-1.pdf",
+    "versi": "Sampul 2024–2025; footer dokumen tertulis 2023–2024. Aturan mengikuti dokumen lampiran.",
+    "halaman_pdf_krs": 15,
+    "halaman_pdf_evaluasi_kelulusan": 22,
+    "halaman_pdf_kehadiran": [16, 17],
+    "halaman_pdf_masa_studi": 20,
+    "halaman_pdf_peringatan_ipk": 26,
+    "kurikulum": "https://si.fst.unair.ac.id/syllabus/",
+    "handbook": "https://drive.google.com/uc?export=download&id=1y71h82tb9Vk2vxqomdawkdFvGKwLwQsu",
+    "konversi_sks": "SKS = ECTS / 1.6, diturunkan dari pasangan >90 credits (144 ECTS) pada modul PKL, halaman PDF 132.",
+    "target_144": "Parameter target sesuai instruksi pengguna; pedoman fakultas menyebut rentang 144–160 SKS."
+  }
+}

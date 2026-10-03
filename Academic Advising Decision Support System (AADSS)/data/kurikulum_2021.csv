@@ -1,0 +1,79 @@
+kode,nama,sks,semester_anjuran,kelompok,ects,halaman_handbook
+AGI101,Islamic Religion I,2,1,Wajib,3.2,5
+AGP101,Protestant Religion I,2,1,Wajib,3.2,7
+AGK101,Catholic Religion I,2,1,Wajib,3.2,9
+AGH101,Hinduism Religion I,2,1,Wajib,3.2,11
+AGB101,Buddhism Religion I,2,1,Wajib,3.2,13
+AGC101,Confucianism Religion I,2,1,Wajib,3.2,15
+NOP103,Five Principle of Indonesia,2,1,Wajib,3.2,17
+NOP101,Civic Education,2,1,Wajib,3.2,19
+KID107,Fundamental of Chemistry,2,1,Wajib,3.2,21
+BID108,General Biology,2,1,Wajib,3.2,23
+MAA101,Calculus,3,1,Wajib,4.8,25
+BAI101,Indonesian Language,2,1,Wajib,3.2,27
+SIP107,Data and References,2,1,Wajib,3.2,29
+SII103,Introduction to Information Systems,3,1,Wajib,4.8,31
+FID112,Basic Physics,2,2,Wajib,3.2,33
+PHP103,Logic and Critical Thinking,2,2,Wajib,3.2,35
+MAL102,Matrix and Linear Transformation,2,2,Wajib,3.2,38
+MAT101,Algorithms and Programming,3,2,Wajib,4.8,40
+MAT102,Algorithms and Programming (Practicum),2,2,Wajib,3.2,42
+MNM107,Introduction to Scientific Collaboration,2,2,Wajib,3.2,44
+MNM106,Communication and Self Development,2,2,Wajib,3.2,46
+MAS118,Descriptive Statistics,3,2,Wajib,4.8,48
+BAE111,English Language I,2,2,Wajib,3.2,50
+SIA204,Business Function and Process,2,3,Wajib,3.2,52
+SIA205,Business Function and Process (Practicum),2,3,Wajib,3.2,54
+SID201,Database,3,3,Wajib,4.8,56
+SID203,Database (Practicum),1,3,Wajib,1.6,59
+SIR201,Object Oriented Programming,2,3,Wajib,3.2,61
+SIR203,Object Oriented Programming (Practicum),1,3,Wajib,1.6,63
+MAS234,Inferential Statistics,3,3,Wajib,4.8,65
+SIJ201,Operating System,2,3,Wajib,3.2,67
+SIJ203,Operating System (Practicum),1,3,Wajib,1.6,69
+MAL204,Discrete Mathematics,2,3,Wajib,3.2,71
+SII301,Analysis and Design of Information System,2,4,Wajib,3.2,73
+SII314,Analysis and Design of Information System (Practicum),1,4,Wajib,1.6,75
+SIC201,Machine Learning,2,4,Wajib,3.2,77
+SIC202,Machine Learning (Practicum),1,4,Wajib,1.6,79
+SIJ202,Computer Network,3,4,Wajib,4.8,81
+SIJ204,Computer Network (Practicum),1,4,Wajib,1.6,83
+SIS202,Enterprise System,2,4,Wajib,3.2,85
+MNM203,Leadership and Organizational Management,3,4,Wajib,4.8,87
+SIS204,Web Programming,2,4,Wajib,3.2,89
+SIS205,Web Programming (Practicum),1,4,Wajib,1.6,91
+SIS304,Mobile Programming,2,4,Wajib,3.2,93
+SIS305,Mobile Programming (Practicum),1,4,Wajib,1.6,95
+SII213,Innovation in Information Systems and Technology,2,5,Wajib,3.2,97
+BAE112,English Language II,2,5,Wajib,3.2,99
+SIS309,Information System Security,3,5,Wajib,4.8,101
+MNW401,Entrepreneurship and Business in Information Systems,2,5,Wajib,3.2,104
+SII208,Interaction Design,2,5,Wajib,3.2,106
+SII209,Interaction Design (Practicum),1,5,Wajib,1.6,108
+SII318,Software Development,2,5,Wajib,3.2,110
+SII319,Software Development (Practicum),1,5,Wajib,1.6,113
+SID303,Data Visualization and Analysis,2,5,Wajib,3.2,116
+SID304,Data Visualization and Analysis (Practicum),1,5,Wajib,1.6,118
+SIA301,Enterprise Architecture Planning,2,5,Wajib,3.2,120
+SIA302,Enterprise Architecture Planning (Practicum),1,5,Wajib,1.6,122
+KNT401,Student Community Service (KKN),3,6,Wajib,4.8,124
+ETT301,Professional Ethic,2,6,Wajib,3.2,126
+SII323,Information Technology Governance,3,6,Wajib,4.8,128
+PNT497,Research Methodology,2,6,Wajib,3.2,130
+KLT301,Field Work Practices (PKL),6,6,Wajib,9.6,132
+MNG206,Management of Information Technology Services,3,6,Pilihan,4.8,133
+MAS235,Business Quantitative Methods,3,6,Pilihan,4.8,136
+SII214,Information Systems Theory,3,6,Pilihan,4.8,138
+SII322,Information Retrieval,3,6,Pilihan,4.8,140
+SIS308,Enterprise Application Development,3,6,Pilihan,4.8,142
+MNG310,Information Technology Project Management,3,6,Pilihan,4.8,144
+SIC401,Knowledge Based Systems,3,7,Pilihan,4.8,146
+SIC402,Data Mining,3,7,Pilihan,4.8,148
+SIR301,Biomedical Informatics,3,7,Pilihan,4.8,150
+MAS324,Business Data Analysis,3,7,Pilihan,4.8,152
+SII404,Information Systems Audit,3,7,Pilihan,4.8,154
+SI408,Software Testing,3,7,Pilihan,4.8,156
+SIC404,Computer Vision,3,7,Pilihan,4.8,158
+MNG402,Information Technology Risk Management,3,7,Pilihan,4.8,160
+SII317,Interaction Design in E-Health,3,7,Pilihan,4.8,162
+PNT4991,Final Project,6,8,Wajib,9.6,164

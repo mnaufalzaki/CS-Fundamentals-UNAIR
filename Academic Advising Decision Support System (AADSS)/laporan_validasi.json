@@ -1,0 +1,16 @@
+{
+  "status": "LULUS",
+  "seed": 2024,
+  "mahasiswa": 30,
+  "pengambilan_mata_kuliah": 998,
+  "ringkasan": 120,
+  "kesalahan": [],
+  "asumsi": [
+    "Seluruh mahasiswa tanpa cuti",
+    "NIM/nama sintetis",
+    "Nilai pengulangan terbaru digunakan sebagai transkrip simulasi; bukan klaim kebijakan resmi",
+    "Komposisi skenario bukan prevalensi nyata",
+    "Katalog mendokumentasikan ECTS dan konversi SKS",
+    "Ketersediaan kelas, prasyarat rinci, jadwal dan approval dosen wali tidak disimulasikan"
+  ]
+}

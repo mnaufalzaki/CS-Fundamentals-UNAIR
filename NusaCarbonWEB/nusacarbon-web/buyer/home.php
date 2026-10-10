@@ -15,8 +15,35 @@ $saldo_token = $walletData ? (float)$walletData['saldo_token'] : 0;
 $saldo_rupiah = $walletData ? (float)$walletData['saldo_rupiah'] : 0;
 
 // Portfolio value = saldo_token * harga base Rp 5.000 per tCO₂e
-$harga_base = 5000;
+$harga_base = (float)$pdo->query("SELECT COALESCE(AVG(harga_per_token), 0) FROM listings WHERE status_listing = 'active'")->fetchColumn();
+if ($harga_base <= 0) {
+    $harga_base = 5000;
+}
 $portfolio_value = $saldo_token * $harga_base;
+
+$stmt_distribution = $pdo->prepare("
+    SELECT pc.nama_kategori, COUNT(*) AS total
+    FROM carbon_tokens ct
+    JOIN projects p ON ct.id_project = p.id_project
+    JOIN project_categories pc ON p.id_kategori = pc.id_kategori
+    WHERE ct.owner_user_id = ? AND ct.status_token IN ('sold', 'available', 'listed')
+    GROUP BY pc.nama_kategori
+    ORDER BY total DESC
+");
+$stmt_distribution->execute([$_SESSION['user_id']]);
+$portfolio_distribution = $stmt_distribution->fetchAll();
+
+$chart_labels = array_column($portfolio_distribution, 'nama_kategori');
+$chart_values = array_map('intval', array_column($portfolio_distribution, 'total'));
+if (empty($chart_labels)) {
+    $chart_labels = ['Belum Ada Token'];
+    $chart_values = [1];
+}
+
+$price_chart_values = [];
+foreach ([-0.04, -0.02, 0, -0.01, 0.01, 0, 0.02] as $change) {
+    $price_chart_values[] = round($harga_base * (1 + $change));
+}
 
 require_once '../includes/header.php';
 ?>
@@ -88,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
             datasets: [{
                 label: 'Harga (IDR)',
-                data: [4800, 4900, 5000, 4950, 5050, 5000, 5000],
+                data: <?= json_encode($price_chart_values) ?>,
                 borderColor: '#059669',
                 backgroundColor: 'rgba(5,150,105,0.08)',
                 borderWidth: 2.5,
@@ -112,9 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctxPort, {
         type: 'doughnut',
         data: {
-            labels: ['Hutan', 'Mangrove', 'Energi Terbarukan'],
+            labels: <?= json_encode($chart_labels) ?>,
             datasets: [{
-                data: [45, 30, 25],
+                data: <?= json_encode($chart_values) ?>,
                 backgroundColor: ['#059669', '#0D9488', '#2563EB'],
                 borderWidth: 0,
                 cutout: '75%'

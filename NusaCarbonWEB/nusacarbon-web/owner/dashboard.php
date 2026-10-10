@@ -22,6 +22,15 @@ foreach($projects as $p) {
     if($p['status_project'] === 'submitted') $counts['submitted']++;
 }
 
+$stmt_tokens = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM carbon_tokens ct
+    JOIN projects p ON ct.id_project = p.id_project
+    WHERE p.id_user = ?
+");
+$stmt_tokens->execute([$_SESSION['user_id']]);
+$issued_tokens = (int)$stmt_tokens->fetchColumn();
+
 require_once '../includes/header.php';
 ?>
 
@@ -43,7 +52,7 @@ require_once '../includes/header.php';
         </div>
         <div class="card">
             <p class="metric-label">Token Diterbitkan</p>
-            <p class="metric-value">45.000 <span class="text-sm">tCO₂e</span></p>
+            <p class="metric-value"><?= formatCO2e($issued_tokens) ?></p>
         </div>
         <div class="card">
             <p class="metric-label">Proyek Terverifikasi</p>

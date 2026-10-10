@@ -9,26 +9,7 @@ $pass = 'nusa_password';
 $port = '3306';
 $charset = 'utf8mb4';
 
-// URL PUBLIK RAILWAY — hanya dipakai jika benar-benar di Railway
-$railwayPublicUrl = 'mysql://root:BzarJvfdhGnOQFPYnyoVGzKHfAXpCFOZ@hayabusa.proxy.rlwy.net:39923/railway';
-
-// Cek apakah berjalan di Railway
-$isRailway = getenv('RAILWAY_ENVIRONMENT') || getenv('RAILWAY_PROJECT_ID');
-
 $dbUrl = getenv('MYSQL_URL') ?: getenv('MYSQL_PUBLIC_URL') ?: getenv('DATABASE_URL');
-
-if ($isRailway) {
-    // Di Railway: gunakan env var atau fallback ke hardcode Railway URL
-    if (!$dbUrl || strpos($dbUrl, 'railway.internal') !== false) {
-        $dbUrl = $railwayPublicUrl;
-    }
-} else {
-    // Di Docker lokal: JANGAN gunakan Railway URL, pakai default lokal
-    // Hanya override jika ada env var eksplisit
-    if (!$dbUrl) {
-        $dbUrl = null; // Gunakan default Docker lokal di atas
-    }
-}
 
 // Parsing URL jika ada
 if ($dbUrl) {

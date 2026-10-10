@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Mangrove coastline at sunrise">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8c16d"/>
+      <stop offset=".48" stop-color="#78b7bd"/>
+      <stop offset="1" stop-color="#0f5f58"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0d756f"/>
+      <stop offset=".6" stop-color="#164e63"/>
+      <stop offset="1" stop-color="#102f3b"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" x2="1">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <circle cx="155" cy="118" r="58" fill="#fff3b0" opacity=".9"/>
+  <path d="M0 248 C125 218 210 246 335 222 C475 196 590 229 718 205 C792 191 848 192 900 202 L900 520 L0 520 Z" fill="#0b3d35" opacity=".95"/>
+  <path d="M0 310 C152 287 258 314 414 292 C604 265 724 302 900 275 L900 520 L0 520 Z" fill="url(#water)"/>
+  <path d="M0 361 C166 343 292 375 448 352 C598 331 741 360 900 337 L900 520 L0 520 Z" fill="#083344" opacity=".62"/>
+  <g fill="none" stroke="#2f1f17" stroke-width="8" stroke-linecap="round">
+    <path d="M296 244 C292 298 287 350 275 428"/>
+    <path d="M331 239 C326 294 317 350 305 432"/>
+    <path d="M372 238 C370 295 362 352 348 426"/>
+    <path d="M299 356 C270 387 250 414 232 456"/>
+    <path d="M333 360 C360 392 380 421 396 462"/>
+    <path d="M371 356 C344 390 328 416 316 457"/>
+  </g>
+  <g fill="url(#leaf)" opacity=".98">
+    <ellipse cx="292" cy="206" rx="92" ry="38" transform="rotate(-9 292 206)"/>
+    <ellipse cx="359" cy="210" rx="102" ry="42" transform="rotate(8 359 210)"/>
+    <ellipse cx="328" cy="168" rx="113" ry="43"/>
+  </g>
+  <g fill="#064e3b" opacity=".9">
+    <ellipse cx="650" cy="218" rx="95" ry="34"/>
+    <ellipse cx="711" cy="231" rx="82" ry="28"/>
+    <ellipse cx="596" cy="233" rx="78" ry="25"/>
+  </g>
+</svg>

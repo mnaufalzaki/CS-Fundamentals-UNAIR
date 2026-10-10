@@ -16,6 +16,17 @@ $stmt = $pdo->query("
 ");
 $queue = $stmt->fetchAll();
 
+$approved_this_month = (int)$pdo->query("
+    SELECT COUNT(*)
+    FROM projects
+    WHERE status_project = 'verified'
+      AND YEAR(created_at) = YEAR(CURRENT_DATE())
+      AND MONTH(created_at) = MONTH(CURRENT_DATE())
+")->fetchColumn();
+
+$rejected_projects = (int)$pdo->query("SELECT COUNT(*) FROM projects WHERE status_project = 'rejected'")->fetchColumn();
+$issued_tokens = (int)$pdo->query("SELECT COUNT(*) FROM carbon_tokens")->fetchColumn();
+
 require_once '../includes/header.php';
 ?>
 
@@ -34,15 +45,15 @@ require_once '../includes/header.php';
         </div>
         <div class="card">
             <p class="metric-label">Disetujui Bulan Ini</p>
-            <p class="metric-value" style="color: var(--color-verified);">15</p>
+            <p class="metric-value" style="color: var(--color-verified);"><?= $approved_this_month ?></p>
         </div>
         <div class="card">
             <p class="metric-label">Ditolak / Revisi</p>
-            <p class="metric-value">1</p>
+            <p class="metric-value"><?= $rejected_projects ?></p>
         </div>
         <div class="card">
             <p class="metric-label">Token Diterbitkan</p>
-            <p class="metric-value">45.200 <span class="text-sm">tCO₂e</span></p>
+            <p class="metric-value"><?= formatCO2e($issued_tokens) ?></p>
         </div>
     </div>
 

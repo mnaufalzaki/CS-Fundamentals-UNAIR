@@ -8,7 +8,7 @@ require_once '../includes/blockchain.php';
 
 $id_project = $_GET['id'] ?? null;
 if (!$id_project) {
-    header("Location: dashboard.php"); exit;
+    header("Location: queue.php"); exit;
 }
 
 $stmt = $pdo->prepare("SELECT p.*, c.nama_kategori FROM projects p JOIN project_categories c ON p.id_kategori = c.id_kategori WHERE p.id_project = ? AND p.status_project = 'submitted'");
@@ -22,6 +22,10 @@ if (!$project) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hasil = $_POST['hasil']; // approve / reject
     $volume = $_POST['volume_co2e'] ?? 0;
+    $default_price = (float)$pdo->query("SELECT COALESCE(AVG(harga_per_token), 5000) FROM listings WHERE status_listing = 'active'")->fetchColumn();
+    if ($default_price <= 0) {
+        $default_price = 5000;
+    }
     
     // Simulate verifier approving triggers mint
     if ($hasil === 'approve') {
@@ -37,12 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->prepare("UPDATE carbon_tokens SET tx_mint_hash = ? WHERE id_token = ?")->execute([$tx, $id_token]);
         
         // Setup initial marketplace listing automatically for simulation
-        $pdo->prepare("INSERT INTO listings (id_user, id_project, harga_per_token, jumlah_token) VALUES (?, ?, 5000, ?)")->execute([$project['id_user'], $id_project, $volume]);
+        $pdo->prepare("INSERT INTO listings (id_user, id_project, harga_per_token, jumlah_token) VALUES (?, ?, ?, ?)")->execute([$project['id_user'], $id_project, $default_price, $volume]);
     } else {
         $pdo->prepare("UPDATE projects SET status_project = 'rejected' WHERE id_project = ?")->execute([$id_project]);
     }
 
-    header("Location: dashboard.php");
+    header("Location: queue.php");
     exit;
 }
 
@@ -51,7 +55,7 @@ require_once '../includes/header.php';
 
 <div class="dashboard-layout fade-up">
     <div class="dashboard-header">
-        <a href="dashboard.php" class="text-sm text-muted hover-primary" style="display: block; margin-bottom: var(--space-xs);">&larr; Kembali ke Antrian</a>
+        <a href="queue.php" class="text-sm text-muted hover-primary" style="display: block; margin-bottom: var(--space-xs);">&larr; Kembali ke Antrian</a>
         <h2 class="dashboard-title">Review Laporan MRV</h2>
         <p class="dashboard-subtitle">Evaluasi laporan pendaftaran proyek dan dMRV: <?= htmlspecialchars($project['nama_project']) ?></p>
     </div>

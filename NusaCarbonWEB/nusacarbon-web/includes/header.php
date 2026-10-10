@@ -53,15 +53,14 @@ $role = $_SESSION['role'] ?? null;
             <li><a href="/buyer/wallet.php" class="<?= $current_page == 'wallet.php' ? 'active' : '' ?>">Wallet</a></li>
         <?php elseif ($role === 'owner'): ?>
             <li><a href="/owner/dashboard.php" class="<?= $current_page == 'dashboard.php' ? 'active' : '' ?>">Dashboard</a></li>
-            <li><a href="/owner/project-form.php" class="<?= $current_page == 'project-form.php' ? 'active' : '' ?>">+ Proyek Baru</a></li>
+            <li><a href="/owner/project-form.php" class="<?= $current_page == 'project-form.php' ? 'active' : '' ?>">Tambahkan Project</a></li>
             <li><a href="/owner/tokens.php" class="<?= $current_page == 'tokens.php' ? 'active' : '' ?>">Token Saya</a></li>
+            <li><a href="/owner/wallet.php" class="<?= $current_page == 'wallet.php' ? 'active' : '' ?>">Wallet</a></li>
         <?php elseif ($role === 'verifier'): ?>
             <li><a href="/verifier/dashboard.php" class="<?= $current_page == 'dashboard.php' ? 'active' : '' ?>">Dashboard</a></li>
-            <li><a href="/verifier/dashboard.php" class="<?= $current_page == 'review.php' ? 'active' : '' ?>">Antrian Review</a></li>
+            <li><a href="/verifier/queue.php" class="<?= in_array($current_page, ['queue.php', 'review.php']) ? 'active' : '' ?>">Antrian Review</a></li>
         <?php elseif ($role === 'admin'): ?>
             <li><a href="/admin/dashboard.php" class="<?= $current_page == 'dashboard.php' ? 'active' : '' ?>">Dashboard</a></li>
-            <li><a href="/admin/kyc-queue.php" class="<?= $current_page == 'kyc-queue.php' ? 'active' : '' ?>">KYC Queue</a></li>
-            <li><a href="/admin/users.php" class="<?= $current_page == 'users.php' ? 'active' : '' ?>">Users</a></li>
         <?php endif; ?>
     </ul>
 

@@ -80,20 +80,12 @@ require_once '../includes/header.php';
     <div class="marketplace-grid">
         <?php foreach ($listings as $listing): ?>
         <div class="card marketplace-card" style="animation: fadeUp 0.35s ease forwards;">
-            <!-- Image mapping by category -->
-            <?php 
-                $img_map = [
-                    'hutan' => 'https://images.unsplash.com/photo-1542273917363-3b1817f69a5d?q=80&w=400&h=200&fit=crop',
-                    'mangrove' => 'https://images.unsplash.com/photo-1579893796593-9c8cb0865a7e?q=80&w=400&h=200&fit=crop',
-                    'energi' => 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=400&h=200&fit=crop'
-                ];
-                $cat_key = strtolower(strtok($listing['nama_kategori'], " "));
-                $img_url = $img_map[$cat_key] ?? 'https://images.unsplash.com/photo-1618477461853-cf6ed80fbfc5?q=80&w=400&h=200&fit=crop';
-            ?>
-            <div class="card-img" style="background: url('<?= $img_url ?>') center/cover; position: relative; border-bottom: 1px solid var(--color-border); overflow: hidden;">
-                <!-- Subtle gradient overlay for better contrast if needed -->
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);"></div>
-            </div>
+            <img
+                class="card-img"
+                src="<?= htmlspecialchars(projectImageUrl($listing['nama_project'], $listing['nama_kategori'], (int)$listing['id_project'])) ?>"
+                alt="Visual proyek <?= htmlspecialchars($listing['nama_project']) ?>"
+                loading="lazy"
+            >
             <div class="card-body">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <span class="badge badge-cat-<?= strtolower(strtok($listing['nama_kategori'], " ")) ?>">

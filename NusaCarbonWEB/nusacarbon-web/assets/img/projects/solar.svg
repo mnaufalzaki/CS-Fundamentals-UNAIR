@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Solar panels under warm sky">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset=".52" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1d4ed8"/>
+      <stop offset="1" stop-color="#082f49"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <circle cx="713" cy="104" r="66" fill="#fff7ad" opacity=".92"/>
+  <path d="M0 338 C128 310 245 325 360 344 C508 369 653 316 900 332 L900 520 L0 520 Z" fill="#365314"/>
+  <g transform="translate(70 230) skewX(-18)">
+    <rect x="0" y="0" width="310" height="118" rx="8" fill="url(#panel)" stroke="#bfdbfe" stroke-width="5"/>
+    <path d="M0 39 H310 M0 78 H310 M77 0 V118 M154 0 V118 M231 0 V118" stroke="#93c5fd" stroke-width="3" opacity=".8"/>
+  </g>
+  <g transform="translate(385 260) skewX(-18)">
+    <rect x="0" y="0" width="360" height="136" rx="8" fill="url(#panel)" stroke="#bfdbfe" stroke-width="5"/>
+    <path d="M0 45 H360 M0 90 H360 M90 0 V136 M180 0 V136 M270 0 V136" stroke="#93c5fd" stroke-width="3" opacity=".8"/>
+  </g>
+  <g transform="translate(210 376)" stroke="#334155" stroke-width="10" stroke-linecap="round">
+    <path d="M0 0 V70"/>
+    <path d="M410 0 V70"/>
+  </g>
+</svg>

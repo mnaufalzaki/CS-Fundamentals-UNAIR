@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Layered tropical rainforest canopy">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#b7f7d0"/>
+      <stop offset=".52" stop-color="#5bbf8f"/>
+      <stop offset="1" stop-color="#14532d"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" x2="1">
+      <stop offset="0" stop-color="#064e3b"/>
+      <stop offset="1" stop-color="#166534"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <path d="M0 252 C98 180 184 204 285 244 C383 281 495 176 606 222 C700 262 789 202 900 235 L900 520 L0 520 Z" fill="#0f766e" opacity=".8"/>
+  <path d="M0 315 C123 245 246 280 360 316 C486 356 575 258 704 302 C787 330 845 298 900 287 L900 520 L0 520 Z" fill="url(#hill)"/>
+  <path d="M0 381 C124 330 228 355 345 386 C487 424 582 343 712 374 C800 395 842 378 900 361 L900 520 L0 520 Z" fill="#052e1b"/>
+  <g opacity=".95">
+    <rect x="92" y="202" width="22" height="248" rx="11" fill="#4a2f18"/>
+    <rect x="438" y="164" width="26" height="300" rx="13" fill="#3f2a17"/>
+    <rect x="726" y="215" width="20" height="220" rx="10" fill="#4a2f18"/>
+    <g fill="#16a34a">
+      <circle cx="102" cy="176" r="74"/>
+      <circle cx="451" cy="144" r="95"/>
+      <circle cx="736" cy="194" r="70"/>
+    </g>
+    <g fill="#22c55e" opacity=".88">
+      <circle cx="173" cy="240" r="83"/>
+      <circle cx="535" cy="214" r="92"/>
+      <circle cx="641" cy="284" r="88"/>
+      <circle cx="302" cy="283" r="95"/>
+    </g>
+  </g>
+</svg>

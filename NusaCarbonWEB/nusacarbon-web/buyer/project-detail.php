@@ -42,9 +42,11 @@ require_once '../includes/header.php';
         <!-- Left Col: Details -->
         <div class="project-details">
             <div class="card" style="padding: 0; overflow: hidden; margin-bottom: var(--space-xl);">
-                <div style="height: 240px; background: var(--color-border); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">
-                    [Project Cover Image 100% width x 240px]
-                </div>
+                <img
+                    src="<?= htmlspecialchars(projectImageUrl($project['nama_project'], $project['nama_kategori'], (int)$project['id_project'])) ?>"
+                    alt="Visual proyek <?= htmlspecialchars($project['nama_project']) ?>"
+                    style="width: 100%; height: 260px; display: block; object-fit: cover;"
+                >
                 <div style="padding: var(--space-lg);">
                     <div style="display: flex; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-sm);">
                         <span class="badge badge-cat-<?= strtolower(strtok($project['nama_kategori'], " ")) ?>"><?= htmlspecialchars($project['nama_kategori']) ?></span>

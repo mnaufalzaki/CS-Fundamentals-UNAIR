@@ -31,4 +31,31 @@ function generateTokenSerial(int $year, int $projectId, int $seq): string {
 function generateCertNumber(int $year, int $seq): string {
     return sprintf('CERT-NC-%d-%03d', $year, $seq);
 }
+
+function projectImageUrl(string $projectName, string $categoryName = '', int $projectId = 0): string {
+    $haystack = strtolower($projectName . ' ' . $categoryName);
+
+    if (str_contains($haystack, 'mangrove') || str_contains($haystack, 'blue carbon')) {
+        return '/assets/img/projects/mangrove.svg';
+    }
+    if (str_contains($haystack, 'solar') || str_contains($haystack, 'surya')) {
+        return '/assets/img/projects/solar.svg';
+    }
+    if (str_contains($haystack, 'wind') || str_contains($haystack, 'angin')) {
+        return '/assets/img/projects/wind.svg';
+    }
+    if (str_contains($haystack, 'forest') || str_contains($haystack, 'hutan') || str_contains($haystack, 'rainforest')) {
+        return '/assets/img/projects/rainforest.svg';
+    }
+
+    $fallbacks = [
+        '/assets/img/projects/seedling.svg',
+        '/assets/img/projects/rainforest.svg',
+        '/assets/img/projects/mangrove.svg',
+        '/assets/img/projects/solar.svg',
+        '/assets/img/projects/wind.svg',
+    ];
+
+    return $fallbacks[abs($projectId) % count($fallbacks)];
+}
 ?>

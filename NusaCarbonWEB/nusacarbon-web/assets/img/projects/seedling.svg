@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Young seedlings in restored land">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#bae6fd"/>
+      <stop offset=".56" stop-color="#86efac"/>
+      <stop offset="1" stop-color="#3f2e20"/>
+    </linearGradient>
+    <linearGradient id="soil" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#854d0e"/>
+      <stop offset="1" stop-color="#3f2e20"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <path d="M0 276 C120 240 255 275 385 253 C525 228 651 263 900 238 L900 520 L0 520 Z" fill="#65a30d" opacity=".72"/>
+  <path d="M0 342 C146 310 282 338 432 320 C580 303 730 332 900 305 L900 520 L0 520 Z" fill="url(#soil)"/>
+  <g stroke="#5c3d1f" stroke-width="5" opacity=".35">
+    <path d="M0 408 C160 376 318 408 476 386 C632 364 756 400 900 372"/>
+    <path d="M0 468 C176 438 314 468 500 444 C664 424 779 454 900 432"/>
+  </g>
+  <g stroke="#14532d" stroke-width="8" stroke-linecap="round" fill="#22c55e">
+    <path d="M280 360 C278 323 282 294 302 266"/>
+    <ellipse cx="254" cy="302" rx="52" ry="24" transform="rotate(-26 254 302)"/>
+    <ellipse cx="331" cy="288" rx="57" ry="25" transform="rotate(23 331 288)"/>
+    <path d="M545 388 C543 350 551 319 575 286"/>
+    <ellipse cx="515" cy="331" rx="54" ry="23" transform="rotate(-24 515 331)"/>
+    <ellipse cx="602" cy="314" rx="60" ry="25" transform="rotate(25 602 314)"/>
+  </g>
+</svg>

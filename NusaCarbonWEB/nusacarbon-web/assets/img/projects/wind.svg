@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="Wind turbines at sunset">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fb923c"/>
+      <stop offset=".5" stop-color="#facc15"/>
+      <stop offset=".78" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#075985"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <circle cx="204" cy="172" r="66" fill="#fff7ad" opacity=".92"/>
+  <path d="M0 350 C160 316 273 350 415 335 C575 316 704 344 900 318 L900 520 L0 520 Z" fill="#365314"/>
+  <path d="M0 405 C168 374 315 400 452 386 C594 371 733 398 900 379 L900 520 L0 520 Z" fill="#1f2937" opacity=".32"/>
+  <g stroke="#f8fafc" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M448 154 V382"/>
+    <path d="M448 154 L368 118"/>
+    <path d="M448 154 L528 116"/>
+    <path d="M448 154 L449 244"/>
+    <path d="M635 190 V385" opacity=".82"/>
+    <path d="M635 190 L580 166" opacity=".82"/>
+    <path d="M635 190 L692 166" opacity=".82"/>
+    <path d="M635 190 L636 252" opacity=".82"/>
+    <path d="M274 213 V392" opacity=".74"/>
+    <path d="M274 213 L222 191" opacity=".74"/>
+    <path d="M274 213 L329 190" opacity=".74"/>
+    <path d="M274 213 L275 271" opacity=".74"/>
+  </g>
+  <g fill="#e0f2fe">
+    <circle cx="448" cy="154" r="13"/>
+    <circle cx="635" cy="190" r="10"/>
+    <circle cx="274" cy="213" r="9"/>
+  </g>
+</svg>

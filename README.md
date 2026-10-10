@@ -52,7 +52,7 @@ flowchart TD
 A digital marketplace for trading carbon credit tokens with dMRV (digital Measurement, Reporting and Verification) workflows.
 
 - **[`Nusa Carbon Mobile`](./Nusa%20Carbon%20Mobile)**: a **Flutter** client for buyers and project owners, backed by a **Spring Boot** API. It shows portfolio metrics, hosts dMRV upload forms, and simulates blockchain transaction states. A release APK is included.
-- **[`NusaCarbonWEB`](./NusaCarbonWEB)**: a **PHP + MySQL** web portal with role-based dashboards for Buyers, Project Owners, Verifiers and Admins. It runs locally with Docker and deploys to Railway. A static HTML/CSS prototype is included alongside it.
+- **[`NusaCarbonWEB`](./NusaCarbonWEB)**: a **PHP + MySQL** web portal with role-based dashboards for Buyers, Project Owners, Verifiers and Admins. It runs locally with Docker and was previously deployed on Railway. A static HTML/CSS prototype is included alongside it.
 
 ### 2. [`Credit Default Risk AI`](./CreditDefaultRiskAI)
 
@@ -111,7 +111,6 @@ A model pipeline that predicts the price direction of BBCA (Bank Central Asia) s
 ## ⚙️ Repository Notes
 
 - **`requirements.txt`** at the root is used by Streamlit Community Cloud to deploy the AADSS app.
-- **`.railwayignore`** limits Railway deployments to the `NusaCarbonWEB` folder.
 - Trained model files (`*.pkl`), logs, build outputs and `.env` files are excluded by `.gitignore`. See each project's README for how to regenerate them.
 
 ---

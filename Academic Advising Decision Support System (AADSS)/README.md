@@ -23,9 +23,9 @@ Built with **Streamlit**, this application provides automated semester-by-semest
 | :---: | :---: |
 | ![Cohort Dashboard](pratinjau_dashboard.png) | ![Student Roster](pratinjau_daftar.png) |
 
-| Ad-hoc Individual Check (Dataset-free Simulation) |
-| :---: |
-| ![Individual Check](pratinjau_cek_individu.png) |
+| Role Selection | Ad-hoc Individual Check (Dataset-free Simulation) |
+| :---: | :---: |
+| ![Role Selection](pratinjau_pilih_peran.png) | ![Individual Check](pratinjau_cek_individu.png) |
 
 ---
 

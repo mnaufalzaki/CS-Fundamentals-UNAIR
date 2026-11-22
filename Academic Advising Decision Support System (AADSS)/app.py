@@ -48,6 +48,7 @@ ROLES={
     'Akademik Universitas':[PAGE_UNIV,MENU[3]],
     'Mahasiswa':[PAGE_MHS,MENU[2],MENU[3]],
 }
+IDENTIFIED_DATA_ROLES={'Dosen Wali','Koordinator Program Studi','Akademik Fakultas'}
 ROLE_SCOPE={
     'Mahasiswa':'Konsultasi dengan dosen wali sebelum mengisi KRS, lalu mengisi KRS di Cyber Campus untuk disetujui (PDF hlm. 23, 26). Hanya data diri sendiri.',
     'Dosen Wali':'Perwalian dan persetujuan KRS mahasiswa bimbingan (PDF hlm. 23, 27–28).',
@@ -390,8 +391,8 @@ elif page==PAGE_MHS:
         st.error('NIM tidak ditemukan pada dataset simulasi angkatan 2024.')
     else:
         me=next(match.itertuples())
-        own_snap=student_snapshot(me,period,max_credits(semester_summary(grades,catalog,me.nim,period-1)['ips']))
-        planned=st.number_input('Rencana total SKS KRS',min_value=0,max_value=60,value=max_credits(own_snap.ips),step=1,key=f'mhs_krs_{me.nim}_{period}')
+        own_cap=max_credits(semester_summary(grades,catalog,me.nim,period-1)['ips'])
+        planned=st.number_input('Rencana total SKS KRS',min_value=0,max_value=60,value=own_cap,step=1,key=f'mhs_krs_{me.nim}_{period}')
         show_result(analyze(student_snapshot(me,period,planned)))
         st.subheader('Langkah perwalian')
         for step in ['Konsultasikan strategi studi dan rencana KRS dengan dosen wali, termasuk peringatan di atas.',
@@ -557,8 +558,12 @@ else:
     st.markdown('[Kurikulum dan handbook 2021 — situs prodi](https://si.fst.unair.ac.id/syllabus/)')
     st.caption(RULES['sumber']['versi'])
     st.success('Validasi dataset: LULUS · 30 mahasiswa · 120 ringkasan semester · riwayat nilai konsisten.')
-    for filename in ['mahasiswa.csv','nilai.csv','ringkasan_semester.csv','kurikulum_2021.csv']:
+    # Berkas berisi nama/NIM/nilai per mahasiswa hanya untuk peran yang memang melihat data individu.
+    files=['mahasiswa.csv','nilai.csv','ringkasan_semester.csv'] if role in IDENTIFIED_DATA_ROLES else []
+    for filename in files+['kurikulum_2021.csv']:
         st.download_button('Unduh '+filename,(ROOT/'data'/filename).read_bytes(),file_name=filename,mime='text/csv',key='dl_'+filename)
+    if not files:
+        st.caption('Berkas data per mahasiswa (nama, NIM, nilai) hanya tersedia untuk Dosen Wali, Koordinator Program Studi, dan Akademik Fakultas.')
     pdf=ROOT/'docs/pedoman_fst_2024_2025.pdf'
     if pdf.exists():
         st.download_button('Unduh pedoman pendidikan sumber',pdf.read_bytes(),file_name='Pedoman-Pendidikan-FST-2024-2025-1.pdf',mime='application/pdf')

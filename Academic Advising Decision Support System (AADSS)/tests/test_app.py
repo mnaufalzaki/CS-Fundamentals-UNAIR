@@ -129,6 +129,19 @@ class AppTestCase(unittest.TestCase):
         self.assertNotIn('Nama',history.columns)
         self.app.number_input(key='mhs_krs_18724001_5').set_value(25).run()
         self.assertTrue(any('melampaui' in error.value for error in self.app.error))
+    def test_dataset_downloads_follow_role(self):
+        personal={'Unduh mahasiswa.csv','Unduh nilai.csv','Unduh ringkasan_semester.csv'}
+        expected={'Koordinator Program Studi':True,'Akademik Fakultas':True,'Dekan':False,
+                  'Akademik Universitas':False,'Mahasiswa':False,'Dosen Wali':True}
+        for role,allowed in expected.items():
+            with self.subTest(role=role):
+                self.set_role(role)
+                self.app.radio(key='menu').set_value('Pedoman').run()
+                self.assertFalse(self.app.exception)
+                labels={b.proto.label for b in self.app.get('download_button')}
+                self.assertIn('Unduh kurikulum_2021.csv',labels)
+                self.assertEqual(personal<=labels,allowed)
+                if not allowed: self.assertFalse(personal&labels)
     def test_guidelines(self):
         self.app.radio(key='menu').set_value('Pedoman').run()
         self.assertFalse(self.app.exception)

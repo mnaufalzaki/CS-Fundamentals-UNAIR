@@ -5,7 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.57.0-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Pandas](https://img.shields.io/badge/Pandas-3.0.1-150458.svg?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Plotly](https://img.shields.io/badge/Plotly-6.7.0-3F4F75.svg?logo=plotly&logoColor=white)](https://plotly.com/)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-30%20Passed-success.svg?logo=pytest&logoColor=white)]()
+[![Tests](https://img.shields.io/badge/Unit%20Tests-31%20Passed-success.svg?logo=pytest&logoColor=white)]()
 [![Validation Status](https://img.shields.io/badge/Dataset%20Integrity-VERIFIED-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
 
@@ -64,7 +64,7 @@ Built with **Streamlit**, this application provides automated semester-by-semest
 
 - **Academic Policy Transparency**
   - Explicit rule engine parameters matched directly with page citations from the official FST Academic Handbook.
-  - Direct download access to original source references and dataset artifacts.
+  - Direct download access to original source references and dataset artifacts. Student-level files (names, NIM, grades) are offered only to Dosen Wali, Koordinator Program Studi, and Akademik Fakultas; the curriculum file and handbook are available to every role.
 
 ---
 
@@ -198,7 +198,7 @@ The codebase includes full automated test coverage and dataset validation script
    ```bash
    python3 -m unittest discover -s tests -v
    ```
-   *Executes 30 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus, and page navigation.*
+   *Executes 31 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus and data downloads, and page navigation.*
 
 3. **Regenerate Synthetic Dataset (Optional):**
    ```bash

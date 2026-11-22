@@ -41,6 +41,8 @@ def validate_snapshot(s: Snapshot) -> list[str]:
                 errors.append(f'{label} harus diisi dari KHS pada rentang 0–4.')
             elif khs_round(value) != value:
                 errors.append(f'{label} menggunakan maksimal dua angka desimal sesuai KHS.')
+        if not errors and s.sks_lulus == 0 and (s.ips != 0 or s.ipk != 0):
+            errors.append('IPS dan IPK harus 0,00 bila belum ada SKS lulus kumulatif.')
         if s.sks_lulus > 24 * (s.semester_akan - 1):
             errors.append('SKS lulus melampaui kapasitas maksimum 24 SKS per semester selesai dalam skenario demo.')
     return errors

@@ -13,6 +13,8 @@ A lightweight, rule-based **Academic Advising Decision Support System** designed
 
 Built with **Streamlit**, this application provides automated semester-by-semester study progress monitoring, dynamic Study Plan (*KRS*) credit ceiling calculations, early warning risk detection for academic evaluations, and an ad-hoc **Individual Check** calculator that functions completely independent of preloaded datasets.
 
+> **Language note:** this README is in English, but the application interface, `PLAN.md`, and the generated reports are in **Bahasa Indonesia**.
+
 ---
 
 ## 📸 Interface Preview
@@ -74,7 +76,7 @@ Determined strictly by the preceding semester's Grade Point Average (*IPS*) *(Ha
 - **Maximum "D" Grade Threshold:** Grade "D" counts as passing credit; however, total SKS with grade "D" must not exceed **20%** of total graduation credits *(Handbook pp. 16, 22)*.
 - **"E" Grade Prohibition:** No "E" grades are permitted for graduation. Because synthetic dataset instances omit "E" grades, the absence of "E" on an official transcript remains explicitly marked as **Unverified** until certified by the academic bureau.
 - **Study Duration:** Standard duration is 8 semesters; maximum allowed study period is 14 semesters without academic leave.
-- **Degree Target:** Configured to a baseline target of **144 SKS**.
+- **Degree Target:** Configured to a baseline target of **144 SKS**. This is a project parameter, not a handbook rule: the faculty handbook specifies a range of **144–160 SKS**. Change `target_sks` in `rules.json` if your program requires more.
 
 ### 3. Degree Completion Projection Formula
 ```text
@@ -94,7 +96,7 @@ estimated_term      = completed_semesters + ceil(remaining_sks / credit_velocity
 ## 📂 Project Structure
 
 ```text
-academic-advising-dss/
+Academic Advising Decision Support System (AADSS)/
 ├── .streamlit/
 │   └── config.toml             # Custom theme tokens & server parameters
 ├── data/
@@ -113,7 +115,9 @@ academic-advising-dss/
 ├── risk.py                     # Academic risk assessment & classification engine
 ├── rules.json                  # Academic thresholds, rule weights, and citations
 ├── validate_data.py            # Dataset reconciliation and audit verification script
-├── Jalankan.command            # One-click launch executable for macOS
+├── Jalankan.command            # One-click launcher for macOS (double-click)
+├── run.sh                      # Launcher for Linux/macOS terminals
+├── run.bat                     # Launcher for Windows
 ├── requirements.txt            # Production dependencies
 └── README.md                   # Project documentation
 ```
@@ -125,20 +129,22 @@ academic-advising-dss/
 ### Prerequisites
 - Python **3.12** or higher.
 
-### Quick Start (macOS)
-If running on macOS, simply double-click:
-```bash
-Jalankan.command
-```
-This automatically verifies dependencies and opens the web application at `http://127.0.0.1:8501`.
+### Quick Start
+After installing the dependencies (step 3 below), launch the app with the script for your system:
+- **macOS:** double-click `Jalankan.command`
+- **Linux / macOS terminal:** `./run.sh`
+- **Windows:** double-click `run.bat`
+
+Each launcher checks that dependencies are installed and opens the web application at `http://127.0.0.1:8501`.
 
 ### Manual Installation (macOS / Linux / Windows)
 
-1. **Clone the repository:**
+1. **Clone the repository and enter the project folder:**
    ```bash
-   git clone https://github.com/<your-username>/academic-advising-dss.git
-   cd academic-advising-dss
+   git clone https://github.com/mnaufalzaki/CS-Fundamentals-UNAIR.git
+   cd "CS-Fundamentals-UNAIR/Academic Advising Decision Support System (AADSS)"
    ```
+   The project lives in a subfolder whose name contains spaces and parentheses, so keep the quotes.
 
 2. **Create and activate a virtual environment:**
    - *macOS / Linux:*

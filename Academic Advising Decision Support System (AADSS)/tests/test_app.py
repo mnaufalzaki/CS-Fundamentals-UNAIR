@@ -5,7 +5,20 @@ from streamlit.testing.v1 import AppTest
 APP=Path(__file__).resolve().parents[1]/'app.py'
 
 class AppTestCase(unittest.TestCase):
-    def setUp(self): self.app=AppTest.from_file(str(APP),default_timeout=30).run()
+    def setUp(self):
+        self.app=AppTest.from_file(str(APP),default_timeout=30).run()
+        self.app.selectbox(key='peran').set_value('Dosen Wali').run()
+    def test_landing_requires_role(self):
+        app=AppTest.from_file(str(APP),default_timeout=30).run()
+        self.assertFalse(app.exception)
+        self.assertIsNone(app.selectbox(key='peran').value)
+        self.assertEqual(len(app.metric),0)
+        cards=[b for b in app.button if b.key and b.key.startswith('masuk_')]
+        self.assertEqual(len(cards),6)
+        cards[-1].click().run()  # Mahasiswa
+        self.assertFalse(app.exception)
+        self.assertEqual(app.selectbox(key='peran').value,'Mahasiswa')
+        self.assertEqual(app.radio(key='menu').value,'Studi Saya')
     def test_dashboard_and_periods(self):
         self.assertFalse(self.app.exception)
         self.assertEqual(self.app.metric[0].value,'30')

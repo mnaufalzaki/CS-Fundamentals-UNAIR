@@ -10,27 +10,52 @@ from academic import ROOT, RULES, load_data, semester_summary, transcript_at, ma
 from risk import Snapshot, analyze, LEVELS
 from validate_data import validate
 
-st.set_page_config(page_title='Academic Advising DSS — UNAIR', page_icon='🎓', layout='wide', initial_sidebar_state='expanded')
+st.set_page_config(page_title='Academic Advising DSS — UNAIR', page_icon='🎓', layout='wide', initial_sidebar_state='auto')
 st.markdown('''<style>
-[data-testid="stSidebar"] {background:#072c55;}
-[data-testid="stSidebar"] * {color:#f8fafc;}
-[data-testid="stSidebar"] [data-baseweb="select"] *,
-[data-testid="stSidebar"] [data-testid="stSelectbox"] .react-aria-ComboBox * {color:#142c49;-webkit-text-fill-color:#142c49;}
-[data-testid="stSidebar"] label {color:#f8fafc!important;}
-.block-container {padding-top:2rem;max-width:1440px;}
-h1,h2,h3 {color:#073566;}
-.hero {border-left:5px solid #d4aa45;background:linear-gradient(110deg,#073566,#155385);color:white;padding:25px 30px;border-radius:12px;margin-bottom:24px;}
-.hero h1 {color:white;margin:7px 0 9px;font-size:2.2rem;}
-.hero p {margin:0;color:#e3ecf5;}
-.eyebrow {font-size:.8rem;letter-spacing:.12em;color:#eacb83;font-weight:700;}
-[data-testid="stMetric"] {background:#fff;border:1px solid #dce5ee;border-top:3px solid #d4aa45;border-radius:10px;padding:16px;}
-[data-testid="stMetricLabel"] {color:#42617e;min-height:38px;}
-[data-testid="stMetricLabel"] p {white-space:normal!important;overflow:visible!important;text-overflow:clip!important;}
+/* Tata letak umum */
+.block-container {padding-top:3.2rem;padding-bottom:3rem;max-width:1280px;}
+h1,h2,h3 {color:#0b2f57;letter-spacing:-.01em;}
+h2 {font-size:1.35rem!important;margin-top:.6rem;}
+h3 {font-size:1.12rem!important;}
+/* Header halaman */
+.hero {display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(115deg,#0b2f57 0%,#134b82 100%);color:#fff;padding:20px 24px;border-radius:14px;
+  margin-bottom:14px;box-shadow:0 6px 18px rgba(11,47,87,.14);}
+.hero .eyebrow {font-size:.72rem;letter-spacing:.14em;color:#e3b94b;font-weight:700;text-transform:uppercase;}
+.hero h1 {color:#fff;margin:6px 0 4px;font-size:1.7rem;line-height:1.2;padding:0;}
+.hero p {margin:0;color:#d9e4f0;font-size:.95rem;}
+.role-pill {background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;
+  padding:5px 12px;font-size:.8rem;font-weight:600;white-space:nowrap;}
+.scope {color:#5b7089;font-size:.86rem;margin:-4px 0 14px;}
+/* Kartu metrik */
+[data-testid="stMetric"] {background:#fff;border:1px solid #dde5ee;border-top:4px solid #c9a227;border-radius:12px;
+  padding:14px 16px;box-shadow:0 1px 2px rgba(20,44,73,.05);height:100%;}
+[data-testid="stMetricLabel"] p {white-space:normal!important;overflow:visible!important;text-overflow:clip!important;color:#5b7089;font-weight:600;}
+[data-testid="stMetricValue"] {color:#0b2f57;font-weight:700;}
+.st-key-status_metrics [data-testid="stColumn"]:nth-child(2) [data-testid="stMetric"] {border-top-color:#1b7b6c;}
+.st-key-status_metrics [data-testid="stColumn"]:nth-child(3) [data-testid="stMetric"] {border-top-color:#c38a18;}
+.st-key-status_metrics [data-testid="stColumn"]:nth-child(4) [data-testid="stMetric"] {border-top-color:#b64046;}
+/* Tabel, tombol, kartu */
+[data-testid="stDataFrame"] {border:1px solid #dde5ee;border-radius:12px;overflow:hidden;background:#fff;}
 .st-key-risk_filters button {border-radius:18px;}
-.hero {padding:18px 24px;margin-bottom:18px;}
-.hero h1 {font-size:1.85rem;}
-[data-testid="stDataFrame"] {border:1px solid #dce5ee;border-radius:12px;overflow:hidden;}
-
+.role-card h4 {margin:0 0 4px;color:#0b2f57;font-size:1.05rem;}
+.role-card p {margin:0;color:#5b7089;font-size:.88rem;min-height:3.6em;}
+.brand {font-weight:800;font-size:1.05rem;letter-spacing:.02em;}
+.brand small {display:block;font-weight:500;opacity:.75;font-size:.72rem;letter-spacing:.12em;margin-top:2px;}
+/* Ponsel */
+@media (max-width: 640px) {
+  .block-container {padding:3rem .8rem 3rem;}
+  .hero {padding:14px 16px;border-radius:12px;}
+  .hero h1 {font-size:1.3rem;}
+  .hero p {font-size:.85rem;}
+  h2 {font-size:1.15rem!important;}
+  /* Kartu metrik dua per baris, bukan satu kolom panjang */
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"] [data-testid="stMetric"]) {flex-direction:row!important;flex-wrap:wrap!important;gap:.6rem!important;}
+  [data-testid="stHorizontalBlock"]:has(> [data-testid="stColumn"] [data-testid="stMetric"]) > [data-testid="stColumn"] {flex:1 1 calc(50% - .6rem)!important;min-width:calc(50% - .6rem)!important;width:calc(50% - .6rem)!important;}
+  [data-testid="stMetric"] {padding:10px 12px;}
+  [data-testid="stMetricValue"] {font-size:1.45rem!important;}
+  .role-card p {min-height:0;}
+}
 </style>''',unsafe_allow_html=True)
 COLORS={LEVELS[0]:'#1b7b6c',LEVELS[1]:'#c38a18',LEVELS[2]:'#b64046'}
 MENU=['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']
@@ -84,29 +109,49 @@ if errors:
     st.stop()
 students, grades, catalog, stored=frames
 
+ROLE_SUMMARY={
+    'Dosen Wali':'Pantau mahasiswa bimbingan, periksa batas SKS dan rencana KRS sebelum approval.',
+    'Koordinator Program Studi':'Tren status program studi, jenis peringatan, dan daftar tindak lanjut.',
+    'Akademik Fakultas':'Daftar verifikasi Evaluasi I–III dan status integritas data.',
+    'Dekan':'Ringkasan pimpinan dan kasus evaluasi untuk dipertimbangkan.',
+    'Akademik Universitas':'Rekap agregat per periode tanpa identitas mahasiswa.',
+    'Mahasiswa':'Lihat batas SKS, peringatan, dan langkah perwalianmu sendiri.',
+}
+
+
 def reset_menu_for_role():
-    st.session_state['menu']=ROLES[st.session_state['peran']][0]
+    if st.session_state.get('peran'):
+        st.session_state['menu']=ROLES[st.session_state['peran']][0]
+
+
+def choose_role(name):
+    st.session_state['peran']=name
+    st.session_state['menu']=ROLES[name][0]
 
 
 with st.sidebar:
-    st.markdown('### SI · UNAIR')
-    st.caption('FAKULTAS SAINS DAN TEKNOLOGI')
-    role=st.selectbox('Peran pengguna',list(ROLES),key='peran',on_change=reset_menu_for_role)
-    st.caption('Simulasi peran tanpa login: membatasi tampilan, bukan pengamanan data.')
-    if st.session_state.get('menu') not in ROLES[role]:
-        st.session_state['menu']=ROLES[role][0]
-    page=st.radio('Menu',ROLES[role],key='menu')
-    st.divider()
-    period=st.selectbox('Perwalian awal semester',PERIODS,index=3,key='periode')
-    st.caption(f'Simulasi angkatan 2024 · KHS sampai semester {period-1}.')
-    st.caption('30 mahasiswa sintetis · Kurikulum 2021 · Tanpa cuti')
+    st.markdown('<div class="brand">SI · UNAIR<small>FAKULTAS SAINS DAN TEKNOLOGI</small></div>',unsafe_allow_html=True)
+    role=st.selectbox('Peran pengguna',list(ROLES),index=None,placeholder='Pilih peran',key='peran',on_change=reset_menu_for_role)
+    st.caption('Simulasi tanpa login: membatasi tampilan, bukan pengamanan data.')
+    page,period=None,PERIODS[-1]
+    if role:
+        if st.session_state.get('menu') not in ROLES[role]:
+            st.session_state['menu']=ROLES[role][0]
+        page=st.radio('Menu',ROLES[role],key='menu')
+        st.divider()
+        period=st.selectbox('Perwalian awal semester',PERIODS,index=3,key='periode')
+        st.caption(f'Simulasi angkatan 2024 · KHS sampai semester {period-1}.')
+        st.caption('30 mahasiswa sintetis · Kurikulum 2021 · Tanpa cuti')
     st.divider()
     st.caption('Data simulasi · NIM contoh 18724001–18724030.')
 
 
 def hero(title, subtitle):
-    st.markdown(f'<div class="hero"><div class="eyebrow">SISTEM INFORMASI · FST · UNIVERSITAS AIRLANGGA</div><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div>',unsafe_allow_html=True)
-    st.caption(f'Peran: **{role}** · {ROLE_SCOPE[role]}')
+    pill=f'<div class="role-pill">{html.escape(role)}</div>' if role else ''
+    st.markdown(f'<div class="hero"><div><div class="eyebrow">S1 Sistem Informasi · FST · Universitas Airlangga</div>'
+                f'<h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div>{pill}</div>',unsafe_allow_html=True)
+    if role:
+        st.markdown(f'<div class="scope">{html.escape(ROLE_SCOPE[role])}</div>',unsafe_allow_html=True)
 
 
 def notes():
@@ -248,7 +293,7 @@ def status_counts(df):
 
 
 def status_metrics(df, percent=False):
-    cols=st.columns(4)
+    cols=st.container(key='status_metrics').columns(4)
     cols[0].metric('Mahasiswa',len(df))
     for col,(label,count) in zip(cols[1:],status_counts(df).items()):
         col.metric(label,f'{count} ({count/len(df):.0%})' if percent else count)
@@ -282,6 +327,20 @@ def evaluation_cases(df):
                              'Estimasi semester 144 SKS':row['Estimasi semester 144 SKS']})
     return pd.DataFrame(rows,columns=['NIM','Nama','Tahap','Ketentuan','SKS lulus','IPK','Estimasi semester 144 SKS'])
 
+
+if role is None:
+    hero('Academic Advising DSS','Pilih peran untuk membuka tampilan sesuai tugas Anda menurut pedoman FST.')
+    st.markdown('<div class="scope">Setiap peran melihat menu dan tingkat detail data yang berbeda. Peran bisa diganti kapan saja dari sidebar.</div>',unsafe_allow_html=True)
+    names=list(ROLES)
+    for index,name in enumerate(names):
+        if index%3==0:
+            columns=st.columns(3)  # satu baris per tiga kartu agar urutan tetap benar saat ditumpuk di ponsel
+        with columns[index%3].container(border=True):
+            st.markdown(f'<div class="role-card"><h4>{html.escape(name)}</h4><p>{html.escape(ROLE_SUMMARY[name])}</p></div>',unsafe_allow_html=True)
+            st.button('Masuk',key=f'masuk_{index}',on_click=choose_role,args=(name,),width='stretch',
+                      type='primary' if name=='Dosen Wali' else 'secondary')
+    st.caption('Data 30 mahasiswa sintetis angkatan 2024 · Kurikulum 2021 · Aturan dari Pedoman Pendidikan FST.')
+    st.stop()
 
 if page==PAGE_KPS:
     hero('Monitoring Program Studi',f'S1 Sistem Informasi · Angkatan 2024 · Awal semester {period}')
@@ -368,7 +427,7 @@ elif page==PAGE_UNIV:
                         **{label:int((cases.Tahap==label).sum()) for label in EVALUATION_STAGES.values()}})
     recap=pd.DataFrame(records)
     current=recap[recap['Awal semester']==period].iloc[0]
-    cols=st.columns(4)
+    cols=st.container(key='status_metrics').columns(4)
     cols[0].metric('Mahasiswa',int(current.Mahasiswa))
     for col,label in zip(cols[1:],SHORT_STATUS.values()):
         col.metric(label,int(current[label]))
@@ -411,7 +470,7 @@ elif page==PAGE_MHS:
 elif page==MENU[0]:
     hero('Perwalian Angkatan 2024', f'Simulasi awal semester {period} · Ringkasan KHS sampai semester {period-1}')
     df=dashboard_rows()
-    cols=st.columns(4)
+    cols=st.container(key='status_metrics').columns(4)
     cols[0].metric('Mahasiswa',len(df))
     for idx,level in enumerate(LEVELS):
         cols[idx+1].metric(['Tanpa peringatan','Perhatian','Prioritas'][idx],int((df.Status==level).sum()))

@@ -5,7 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.57.0-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Pandas](https://img.shields.io/badge/Pandas-3.0.1-150458.svg?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Plotly](https://img.shields.io/badge/Plotly-6.7.0-3F4F75.svg?logo=plotly&logoColor=white)](https://plotly.com/)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-29%20Passed-success.svg?logo=pytest&logoColor=white)]()
+[![Tests](https://img.shields.io/badge/Unit%20Tests-30%20Passed-success.svg?logo=pytest&logoColor=white)]()
 [![Validation Status](https://img.shields.io/badge/Dataset%20Integrity-VERIFIED-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
 
@@ -59,6 +59,7 @@ Built with **Streamlit**, this application provides automated semester-by-semest
     | **Akademik Fakultas** | Academic sub-division: transcripts & administration (pp. 20, 25–26) | Evaluation I/II/III verification list, data-integrity status, CSV export |
     | **Dekan** | Proposes study termination to the Rector on the advisor's consideration (p. 29) | Aggregated summary and trend, evaluation cases for consideration (no transcripts) |
     | **Akademik Universitas** | Rector sets sanctions & termination (pp. 26, 29) | De-identified aggregate recap only (no names or NIM) |
+    | **Mahasiswa** | Consults the advisor before KRS, fills KRS on Cyber Campus for approval (pp. 23, 26) | *My Studies* by entering own NIM (no list of other students): credit cap, KRS check, alerts, KHS history, advising steps; Individual Check |
   - Role selection restricts what is displayed; it is **not** authentication or access control.
 
 - **Academic Policy Transparency**
@@ -197,7 +198,7 @@ The codebase includes full automated test coverage and dataset validation script
    ```bash
    python3 -m unittest discover -s tests -v
    ```
-   *Executes 29 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus, and page navigation.*
+   *Executes 30 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus, and page navigation.*
 
 3. **Regenerate Synthetic Dataset (Optional):**
    ```bash

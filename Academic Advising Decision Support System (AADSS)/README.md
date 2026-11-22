@@ -5,7 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.57.0-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Pandas](https://img.shields.io/badge/Pandas-3.0.1-150458.svg?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Plotly](https://img.shields.io/badge/Plotly-6.7.0-3F4F75.svg?logo=plotly&logoColor=white)](https://plotly.com/)
-[![Tests](https://img.shields.io/badge/Unit%20Tests-31%20Passed-success.svg?logo=pytest&logoColor=white)]()
+[![Tests](https://img.shields.io/badge/Unit%20Tests-32%20Passed-success.svg?logo=pytest&logoColor=white)]()
 [![Validation Status](https://img.shields.io/badge/Dataset%20Integrity-VERIFIED-brightgreen.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-green.svg)]()
 
@@ -50,7 +50,7 @@ Built with **Streamlit**, this application provides automated semester-by-semest
   - Fully client-side session: zero data persistence, safeguarding user confidentiality.
 
 - **Role-Based Views (simulated, no login)**
-  - A sidebar role selector limits menus and data detail to each role's duties in the FST handbook:
+  - The app opens on a **role-selection page**; the chosen role (switchable from the sidebar) limits menus and data detail to that role's duties in the FST handbook:
 
     | Role | Handbook basis | View |
     | :--- | :--- | :--- |
@@ -61,6 +61,7 @@ Built with **Streamlit**, this application provides automated semester-by-semest
     | **Akademik Universitas** | Rector sets sanctions & termination (pp. 26, 29) | De-identified aggregate recap only (no names or NIM) |
     | **Mahasiswa** | Consults the advisor before KRS, fills KRS on Cyber Campus for approval (pp. 23, 26) | *My Studies* by entering own NIM (no list of other students): credit cap, KRS check, alerts, KHS history, advising steps; Individual Check |
   - Role selection restricts what is displayed; it is **not** authentication or access control.
+  - Responsive layout: the sidebar starts collapsed on phones, metric cards sit two per row, and the theme (including the sidebar) is defined in `.streamlit/config.toml`. Run `streamlit run app.py` from this folder so the theme is applied.
 
 - **Academic Policy Transparency**
   - Explicit rule engine parameters matched directly with page citations from the official FST Academic Handbook.
@@ -198,7 +199,7 @@ The codebase includes full automated test coverage and dataset validation script
    ```bash
    python3 -m unittest discover -s tests -v
    ```
-   *Executes 31 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus and data downloads, and page navigation.*
+   *Executes 32 test cases covering boundary values (IPS/KRS), 20% D-grade cutoffs, checkpoint evaluations, projected study-limit alerts, UI interaction states, role-based menus and data downloads, and page navigation.*
 
 3. **Regenerate Synthetic Dataset (Optional):**
    ```bash

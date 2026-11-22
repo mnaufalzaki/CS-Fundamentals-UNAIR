@@ -389,16 +389,17 @@ if page==PAGE_KPS:
             st.info('Tidak ada peringatan pada periode ini.')
     st.subheader('Daftar tindak lanjut')
     follow=df[df._tingkat>0].sort_values(['_tingkat','Nama'],ascending=[False,True]).reset_index(drop=True)
-    follow['Tindak lanjut']=follow._tingkat.map({2:'Koordinasikan dengan dosen wali; siapkan bahan evaluasi studi untuk pimpinan fakultas',
-                                                 1:'Pantau melalui perwalian dosen wali'})
+    follow['Peringatan']=follow._kode.map(lambda codes:[ALERT_LABELS[c] for c in codes])
+    follow['Tindak lanjut']=follow._tingkat.map({2:'Koordinasi dosen wali + bahan evaluasi',1:'Pantau lewat perwalian'})
     st.caption(f'{len(follow)} mahasiswa dengan peringatan · Pilih baris untuk membuka detail perwalian.')
     if len(follow):
-        shown=follow[['Nama','NIM','Status','Alasan','Tindak lanjut']].copy()
+        shown=follow[['Nama','NIM','Status','Peringatan','Tindak lanjut']].copy()
         shown['Status']=shown.Status.map(SHORT_STATUS)
         table_key=f'kps_table_{period}'
         st.dataframe(shown.style.map(status_style,subset=['Status']),hide_index=True,width='stretch',
+                     column_config={'Peringatan':st.column_config.ListColumn('Peringatan',width='large')},
                      key=table_key,on_select=partial(open_selected_student,table_key,follow.NIM.tolist()),selection_mode='single-row')
-    st.download_button('Unduh daftar tindak lanjut (CSV)',follow.drop(columns=['_tingkat','_kode']).to_csv(index=False).encode('utf-8-sig'),
+    st.download_button('Unduh daftar tindak lanjut (CSV)',follow.drop(columns=['_tingkat','_kode','Peringatan']).to_csv(index=False).encode('utf-8-sig'),
                        file_name=f'tindak_lanjut_prodi_awal_semester_{period}.csv',mime='text/csv')
     st.caption('Rencana KRS diasumsikan sama dengan batas SKS; pemeriksaan KRS per mahasiswa ada di halaman Perwalian Mahasiswa.')
     notes()
@@ -434,8 +435,12 @@ elif page==PAGE_DEKAN:
     st.subheader('Kasus evaluasi studi untuk pertimbangan pimpinan')
     cases=evaluation_cases(df)
     if len(cases):
-        st.dataframe(cases[['NIM','Nama','Tahap','SKS lulus','IPK']],hide_index=True,width='stretch',
-                     column_config={'IPK':st.column_config.NumberColumn('IPK',format='%.2f')})
+        per_student=(cases.groupby(['NIM','Nama'],sort=False)
+                     .agg(Tahap=('Tahap',list),**{'SKS lulus':('SKS lulus','first')},IPK=('IPK','first')).reset_index())
+        st.caption(f'{len(per_student)} mahasiswa · satu baris per mahasiswa, semua tahap yang terpicu ditampilkan bersama.')
+        st.dataframe(per_student,hide_index=True,width='stretch',
+                     column_config={'IPK':st.column_config.NumberColumn('IPK',format='%.2f'),
+                                    'Tahap':st.column_config.ListColumn('Tahap',width='large')})
     else:
         st.success('Tidak ada kasus tahap evaluasi pada periode ini.')
     st.info('Usulan penghentian studi kepada Rektor diajukan Dekan **atas pertimbangan dosen wali** (PDF hlm. 29). '
@@ -459,7 +464,8 @@ elif page==PAGE_UNIV:
     for col,label in zip(cols[1:],SHORT_STATUS.values()):
         col.metric(label,int(current[label]))
     st.subheader('Rekap per periode')
-    st.dataframe(recap,hide_index=True,width='stretch')
+    st.caption('FST · S1 Sistem Informasi · Angkatan 2024')
+    st.dataframe(recap.drop(columns=['Fakultas','Program studi','Angkatan']),hide_index=True,width='stretch')
     st.download_button('Unduh rekap agregat (CSV)',recap.to_csv(index=False).encode('utf-8-sig'),
                        file_name='rekap_agregat_fst_si_2024.csv',mime='text/csv')
     st.caption('Dataset simulasi hanya mencakup satu program studi dan satu angkatan. Identitas mahasiswa tidak ditampilkan pada tingkat universitas; '
@@ -479,17 +485,17 @@ elif page==PAGE_MHS:
         me=next(match.itertuples())
         own_cap=max_credits(semester_summary(grades,catalog,me.nim,period-1)['ips'])
         planned=st.number_input('Rencana total SKS KRS',min_value=0,max_value=60,value=own_cap,step=1,key=f'mhs_krs_{me.nim}_{period}')
+        with st.container(border=True):
+            st.markdown('**Langkah perwalian**')
+            st.markdown('1. Konsultasikan strategi studi dan rencana KRS dengan dosen wali, termasuk peringatan di bawah.\n'
+                        '2. Isi KRS yang telah dikonsultasikan di Cyber Campus dengan user ID masing-masing.\n'
+                        '3. Laporkan ke dosen wali untuk approval KRS. Perubahan hanya pada masa KPRS dengan persetujuan dosen wali.')
+            st.caption('PDF hlm. 23 / tercetak 19 dan hlm. 26 / tercetak 22. Hasil aplikasi tidak menggantikan approval dosen wali.')
         show_result(analyze(student_snapshot(me,period,planned)))
-        st.subheader('Langkah perwalian')
-        for step in ['Konsultasikan strategi studi dan rencana KRS dengan dosen wali, termasuk peringatan di atas.',
-                     'Isi KRS yang telah dikonsultasikan di Cyber Campus dengan user ID masing-masing.',
-                     'Laporkan ke dosen wali untuk approval KRS. Perubahan hanya pada masa KPRS dengan persetujuan dosen wali.']:
-            st.write('• '+step)
-        st.caption('PDF hlm. 23 / tercetak 19 dan hlm. 26 / tercetak 22. Hasil aplikasi tidak menggantikan approval dosen wali.')
         st.subheader('Riwayat KHS')
         history=pd.DataFrame([semester_summary(grades,catalog,me.nim,s) for s in range(1,period)])
         st.dataframe(history.drop(columns='nim').rename(columns={'semester':'Semester','ips':'IPS','ipk':'IPK','sks_diambil':'SKS diambil','sks_lulus':'SKS lulus kumulatif','sks_baru_lulus':'SKS baru lulus','sks_d':'SKS D berlaku'}),hide_index=True,width='stretch')
-        fig=px.line(history,x='semester',y=['ips','ipk'],markers=True,color_discrete_sequence=['#0b4f89','#bc8c2c'])
+        fig=px.line(history.rename(columns={'ips':'IPS','ipk':'IPK'}),x='semester',y=['IPS','IPK'],markers=True,color_discrete_sequence=['#0b4f89','#bc8c2c'])
         fig.update_layout(height=260,xaxis=dict(title='Semester selesai',dtick=1),yaxis=dict(title='Indeks prestasi',range=[0,4.1]),legend_title_text=None)
         st.plotly_chart(fig,width='stretch',config={'displayModeBar':False})
     notes()
@@ -582,7 +588,7 @@ elif page==MENU[1]:
     st.subheader('Riwayat yang sudah tersedia')
     history=pd.DataFrame([semester_summary(grades,catalog,nim,s) for s in range(1,period)])
     st.dataframe(history.drop(columns='nim').rename(columns={'semester':'Semester','ips':'IPS','ipk':'IPK','sks_diambil':'SKS diambil','sks_lulus':'SKS lulus kumulatif','sks_baru_lulus':'SKS baru lulus','sks_d':'SKS D berlaku'}),hide_index=True,width='stretch')
-    fig=px.line(history,x='semester',y=['ips','ipk'],markers=True,color_discrete_sequence=['#0b4f89','#bc8c2c'])
+    fig=px.line(history.rename(columns={'ips':'IPS','ipk':'IPK'}),x='semester',y=['IPS','IPK'],markers=True,color_discrete_sequence=['#0b4f89','#bc8c2c'])
     fig.update_layout(height=280,xaxis=dict(title='Semester selesai',dtick=1),yaxis=dict(title='Indeks prestasi',range=[0,4.1]),legend_title_text=None)
     st.plotly_chart(fig,width='stretch',config={'displayModeBar':False})
     with st.expander('Lihat pengambilan mata kuliah dan nilai'):
@@ -636,7 +642,7 @@ else:
     st.write('**Setelah 4 semester:** minimal 40 SKS dan IPK 2,00. **Setelah 8 semester:** minimal 80 SKS dan IPK 2,00. Pemeriksaan dilakukan setelah periode tersebut selesai, bukan saat baru memasuki semester 4 atau 8.')
     st.caption('PDF hlm. 22 / halaman tercetak 18. Evaluasi resmi juga mencakup ketentuan akademik dan studi tanpa izin yang tidak diinput pada aplikasi.')
     st.subheader('Cara menghitung progres')
-    st.code('laju = min(SKS lulus kumulatif / semester selesai, batas SKS dari IPS)\nsisa = max(0, 144 - SKS lulus kumulatif)\nestimasi = semester selesai + ceil(sisa / laju)',language='text')
+    st.code('laju = min(SKS lulus kumulatif / semester selesai, batas SKS dari IPS)\nsisa = max(0, 144 - SKS lulus kumulatif)\nestimasi = semester selesai + ceil(sisa / laju)',language='text',wrap_lines=True)
     st.write('Laju nol atau belum ada semester selesai: estimasi belum tersedia. Jika target SKS tercapai, tampilkan semester selesai; syarat kelulusan lain tetap belum diverifikasi. Kategori risiko adalah hasil aturan, bukan probabilitas kegagalan.')
     st.subheader('Asal dan asumsi dataset')
     st.write('30 mahasiswa sintetis angkatan 2024, riwayat semester 1–4, seed 2024. Mata kuliah bersumber dari kurikulum 2021; bobot SKS dikonversi dari ECTS pada handbook dengan rasio 1,6. IPS/IPK dihitung dari bobot nilai dan SKS, dibulatkan dua desimal. Nilai D lulus; E tidak disimulasikan.')

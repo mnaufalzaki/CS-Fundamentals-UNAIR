@@ -70,7 +70,7 @@ def main():
             'Nilai pengulangan terbaru digunakan sebagai transkrip simulasi; bukan klaim kebijakan resmi',
             'Komposisi skenario bukan prevalensi nyata','Katalog mendokumentasikan ECTS dan konversi SKS',
             'Ketersediaan kelas, prasyarat rinci, jadwal dan approval dosen wali tidak disimulasikan']}
-    (ROOT/'laporan_validasi.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+    (ROOT/'laporan_validasi.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
     print(json.dumps(report,ensure_ascii=False,indent=2))
     if errors: raise SystemExit(1)
 

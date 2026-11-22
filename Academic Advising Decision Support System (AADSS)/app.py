@@ -55,7 +55,12 @@ h3 {font-size:1.12rem!important;}
   [data-testid="stMetric"] {padding:10px 12px;}
   [data-testid="stMetricValue"] {font-size:1.45rem!important;}
   .role-card p {min-height:0;}
+  /* Bilah navigasi: menu selebar layar dan boleh turun baris; semester dan Ganti peran berdampingan */
+  .st-key-topbar [data-testid="stButtonGroup"] > div {flex-wrap:wrap;}
+  .st-key-topbar [data-testid="stButtonGroup"] button {flex:1 1 auto;min-width:0;padding:.3rem .45rem;font-size:.82rem;}
+  .st-key-topbar [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(n+2) {flex:1 1 calc(50% - .5rem)!important;min-width:calc(50% - .5rem)!important;width:calc(50% - .5rem)!important;}
 }
+.st-key-topbar {margin-bottom:.4rem;}
 </style>''',unsafe_allow_html=True)
 COLORS={LEVELS[0]:'#1b7b6c',LEVELS[1]:'#c38a18',LEVELS[2]:'#b64046'}
 MENU=['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']
@@ -129,21 +134,27 @@ def choose_role(name):
     st.session_state['menu']=ROLES[name][0]
 
 
+def leave_role():
+    st.session_state['peran']=None
+
+
+def keep_menu():
+    # Kontrol segmen bisa dikosongkan dengan mengklik pilihan aktif; kembalikan ke halaman terakhir.
+    if st.session_state.get('menu') is None:
+        st.session_state['menu']=st.session_state.get('last_menu') or ROLES[st.session_state['peran']][0]
+    st.session_state['last_menu']=st.session_state['menu']
+
+
+MENU_LABELS={MENU[0]:'Dashboard',MENU[1]:'Perwalian',MENU[2]:'Cek Individu',MENU[3]:'Pedoman',
+             PAGE_KPS:'Monitoring',PAGE_FAKULTAS:'Evaluasi Studi',PAGE_DEKAN:'Ringkasan',
+             PAGE_UNIV:'Rekap',PAGE_MHS:'Studi Saya'}
+
 with st.sidebar:
     st.markdown('<div class="brand">SI · UNAIR<small>FAKULTAS SAINS DAN TEKNOLOGI</small></div>',unsafe_allow_html=True)
     role=st.selectbox('Peran pengguna',list(ROLES),index=None,placeholder='Pilih peran',key='peran',on_change=reset_menu_for_role)
     st.caption('Simulasi tanpa login: membatasi tampilan, bukan pengamanan data.')
-    page,period=None,PERIODS[-1]
-    if role:
-        if st.session_state.get('menu') not in ROLES[role]:
-            st.session_state['menu']=ROLES[role][0]
-        page=st.radio('Menu',ROLES[role],key='menu')
-        st.divider()
-        period=st.selectbox('Perwalian awal semester',PERIODS,index=3,key='periode')
-        st.caption(f'Simulasi angkatan 2024 · KHS sampai semester {period-1}.')
-        st.caption('30 mahasiswa sintetis · Kurikulum 2021 · Tanpa cuti')
     st.divider()
-    st.caption('Data simulasi · NIM contoh 18724001–18724030.')
+    st.caption('30 mahasiswa sintetis angkatan 2024 · Kurikulum 2021 · Tanpa cuti · NIM contoh 18724001–18724030.')
 
 
 def hero(title, subtitle):
@@ -154,7 +165,12 @@ def hero(title, subtitle):
         st.markdown(f'<div class="scope">{html.escape(ROLE_SCOPE[role])}</div>',unsafe_allow_html=True)
 
 
-def notes():
+def notes(expanded=False):
+    with st.expander('Catatan syarat kelulusan dan sumber aturan',expanded=expanded,icon=':material/menu_book:'):
+        notes_body()
+
+
+def notes_body():
     st.info('**Catatan syarat kelulusan dari pedoman:** tidak boleh ada nilai E; SKS bernilai D maksimal **20% dari SKS yang diperoleh**; IPK akhir minimal **2,00**; kurikulum harus selesai. Skripsi harus lulus ujian dan naskah perbaikan diserahkan. Persyaratan administratif, bebas tanggungan alat/buku, serta ketentuan akademik lainnya tetap berlaku. Batas studi **14 semester**, dengan pengecualian resmi sesuai pedoman. Kehadiran kuliah minimal **75%** dan praktikum **100%**, dengan izin dan keputusan ujian mengikuti pedoman.')
     st.caption('Sumber: pedoman lampiran, PDF hlm. 16–17, 20, 22 (halaman tercetak 12–13, 16, 18). Target 144 SKS ditetapkan untuk aplikasi ini sesuai instruksi pengguna. Analisis mengasumsikan studi tanpa cuti.')
 
@@ -330,7 +346,7 @@ def evaluation_cases(df):
 
 if role is None:
     hero('Academic Advising DSS','Pilih peran untuk membuka tampilan sesuai tugas Anda menurut pedoman FST.')
-    st.markdown('<div class="scope">Setiap peran melihat menu dan tingkat detail data yang berbeda. Peran bisa diganti kapan saja dari sidebar.</div>',unsafe_allow_html=True)
+    st.markdown('<div class="scope">Setiap peran melihat menu dan tingkat detail data yang berbeda. Peran bisa diganti kapan saja lewat tombol Ganti peran.</div>',unsafe_allow_html=True)
     names=list(ROLES)
     for index,name in enumerate(names):
         if index%3==0:
@@ -341,6 +357,17 @@ if role is None:
                       type='primary' if name=='Dosen Wali' else 'secondary')
     st.caption('Data 30 mahasiswa sintetis angkatan 2024 · Kurikulum 2021 · Aturan dari Pedoman Pendidikan FST.')
     st.stop()
+
+# Bilah navigasi di area utama agar tetap terlihat di ponsel, saat sidebar tertutup.
+if st.session_state.get('menu') not in ROLES[role]:
+    st.session_state['menu']=ROLES[role][0]
+with st.container(key='topbar'):
+    nav,choose_period,switch=st.columns([6,2,1.6],vertical_alignment='center')
+    page=nav.segmented_control('Menu',ROLES[role],format_func=MENU_LABELS.get,key='menu',
+                               on_change=keep_menu,label_visibility='collapsed') or ROLES[role][0]
+    period=choose_period.selectbox('Perwalian awal semester',PERIODS,index=3,key='periode',
+                                   format_func=lambda p:f'Awal semester {p}',label_visibility='collapsed')
+    switch.button('Ganti peran',on_click=leave_role,width='stretch',icon=':material/swap_horiz:')
 
 if page==PAGE_KPS:
     hero('Monitoring Program Studi',f'S1 Sistem Informasi · Angkatan 2024 · Awal semester {period}')
@@ -586,7 +613,6 @@ elif page==MENU[2]:
         planned=c.number_input('Total SKS rencana KRS',min_value=0,max_value=60,value=20,step=1,key='manual_planned')
         st.caption('Gunakan angka KHS resmi. SKS D termasuk SKS lulus, bukan jumlah mata kuliah. NIM diperlakukan sebagai teks agar angka nol di depan tetap tersimpan.')
         submitted=st.form_submit_button('Analisis perwalian',type='primary')
-    notes()
     if submitted:
         snapshot=Snapshot(int(semester),None if semester==1 else ips,None if semester==1 else ipk,
             0 if semester==1 else int(passed),0 if semester==1 else int(d),int(planned),nama,nim)
@@ -598,10 +624,11 @@ elif page==MENU[2]:
     if 'manual_result' in st.session_state:
         st.caption('Hasil dari pengiriman formulir terakhir. Setelah mengubah input, tekan Analisis perwalian untuk memperbarui hasil.')
         show_result(st.session_state['manual_result'])
+    notes()
 
 else:
     hero('Pedoman dan Dasar Analisis','Aturan akademik, asal data, serta batas pemeriksaan aplikasi.')
-    notes()
+    notes(expanded=True)
     st.subheader('Batas SKS dari IPS semester sebelumnya')
     st.table(pd.DataFrame({'IPS':['Kurang dari 2,00','2,00–2,50','2,51–3,00','Lebih dari 3,00'],'Maksimum SKS':[15,18,20,24]}))
     st.caption('PDF hlm. 15 / halaman tercetak 11. IPS menggunakan dua angka desimal seperti KHS; batas bukan target wajib.')

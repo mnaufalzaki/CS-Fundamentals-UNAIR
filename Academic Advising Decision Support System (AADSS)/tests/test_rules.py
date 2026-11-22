@@ -41,6 +41,17 @@ class RulesTest(unittest.TestCase):
         self.assertNotIn('MASA',self.codes(semester_akan=14,sks_lulus=140))
         self.assertIn('MASA',self.codes(semester_akan=15,sks_lulus=140))
         self.assertEqual(analyze(self.sample(semester_akan=15,sks_lulus=140))['tingkat'],2)
+    def test_projected_study_limit(self):
+        # Laju 11 SKS/semester -> estimasi tepat semester 14: perlu perhatian, bukan prioritas.
+        r=analyze(self.sample(ips=1.5,ipk=2.0,sks_lulus=44))
+        self.assertEqual(r['estimasi_semester'],14)
+        self.assertNotIn('MASA_ESTIMASI',{x['kode'] for x in r['peringatan']});self.assertEqual(r['tingkat'],1)
+        # Laju 10 SKS/semester -> estimasi semester 15: prioritas konsultasi.
+        r=analyze(self.sample(ips=1.5,ipk=2.0,sks_lulus=40))
+        self.assertEqual(r['estimasi_semester'],15)
+        self.assertIn('MASA_ESTIMASI',{x['kode'] for x in r['peringatan']});self.assertEqual(r['tingkat'],2)
+        # Sudah melewati batas: cukup peringatan MASA, tidak digandakan.
+        self.assertNotIn('MASA_ESTIMASI',self.codes(semester_akan=15,sks_lulus=40,ips=1.5,ipk=2.0))
     def test_projection(self):
         self.assertEqual(analyze(self.sample())['estimasi_semester'],8)
         self.assertEqual(analyze(self.sample(ips=1.99))['estimasi_semester'],9)

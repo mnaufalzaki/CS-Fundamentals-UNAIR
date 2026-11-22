@@ -14,7 +14,8 @@ st.set_page_config(page_title='Academic Advising DSS — UNAIR', page_icon='🎓
 st.markdown('''<style>
 [data-testid="stSidebar"] {background:#072c55;}
 [data-testid="stSidebar"] * {color:#f8fafc;}
-[data-testid="stSidebar"] [data-baseweb="select"] * {color:#142c49;}
+[data-testid="stSidebar"] [data-baseweb="select"] *,
+[data-testid="stSidebar"] [data-testid="stSelectbox"] .react-aria-ComboBox * {color:#142c49;-webkit-text-fill-color:#142c49;}
 [data-testid="stSidebar"] label {color:#f8fafc!important;}
 .block-container {padding-top:2rem;max-width:1440px;}
 h1,h2,h3 {color:#073566;}

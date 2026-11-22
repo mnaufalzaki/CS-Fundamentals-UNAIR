@@ -3,6 +3,17 @@ import unittest
 from pathlib import Path
 from streamlit.testing.v1 import AppTest
 APP=Path(__file__).resolve().parents[1]/'app.py'
+LABELS={'Dashboard Angkatan 2024':'Dashboard','Perwalian Mahasiswa':'Perwalian','Cek Individu':'Cek Individu',
+        'Pedoman':'Pedoman','Monitoring Program Studi':'Monitoring','Administrasi Evaluasi Studi':'Evaluasi Studi',
+        'Ringkasan Pimpinan Fakultas':'Ringkasan','Rekap Universitas':'Rekap','Studi Saya':'Studi Saya'}
+
+
+def button(app,label):
+    return next(b for b in app.button if b.label==label)
+
+
+def control(app,key):
+    return next(x for x in app.get('button_group') if x.key==key)
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
@@ -18,7 +29,7 @@ class AppTestCase(unittest.TestCase):
         cards[-1].click().run()  # Mahasiswa
         self.assertFalse(app.exception)
         self.assertEqual(app.selectbox(key='peran').value,'Mahasiswa')
-        self.assertEqual(app.radio(key='menu').value,'Studi Saya')
+        self.assertEqual(control(app,'menu').value,'Studi Saya')
     def test_dashboard_and_periods(self):
         self.assertFalse(self.app.exception)
         self.assertEqual(self.app.metric[0].value,'30')
@@ -26,14 +37,14 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(len(self.app.dataframe[0].value),1)
         self.assertEqual(self.app.dataframe[0].value.iloc[0]['Nama'],'Naufal Pratama')
         self.app.text_input(key='student_search').set_value('').run()
-        self.app.button[1].click().run()
+        button(self.app,'Lanjut').click().run()
         self.assertEqual(self.app.session_state['list_page'],2)
         for semester in [2,3,4,5]:
             self.app.selectbox(key='periode').set_value(semester).run()
             self.assertFalse(self.app.exception)
             self.assertEqual(len(self.app.dataframe[0].value),10)
     def test_perwalian_and_invalid_krs(self):
-        self.app.radio(key='menu').set_value('Perwalian Mahasiswa').run()
+        control(self.app,'menu').set_value('Perwalian Mahasiswa').run()
         self.assertFalse(self.app.exception)
         self.assertEqual(self.app.metric[2].value,'80')
         self.app.number_input(key='krs_18724001_5').set_value(25).run()
@@ -44,27 +55,27 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(self.app.metric[2].value,'59')
         self.assertEqual(len(self.app.dataframe[0].value),3)
     def test_manual_valid_invalid_first_and_cross_cohort(self):
-        self.app.radio(key='menu').set_value('Cek Individu').run()
+        control(self.app,'menu').set_value('Cek Individu').run()
         self.assertFalse(self.app.exception)
         self.app.text_input(key='manual_nim').set_value('001234')
         self.app.text_input(key='manual_nama').set_value('Mahasiswa lain')
         self.app.number_input(key='manual_ips').set_value(2.5)
         self.app.number_input(key='manual_planned').set_value(19)
-        self.app.button[0].click().run()
+        button(self.app,'Analisis perwalian').click().run()
         self.assertFalse(self.app.exception)
         self.assertEqual(self.app.metric[3].value,'18')
         self.assertTrue(any('melampaui' in error.value for error in self.app.error))
         self.app.number_input(key='manual_d').set_value(77)
-        self.app.button[0].click().run()
+        button(self.app,'Analisis perwalian').click().run()
         self.assertFalse(self.app.exception)
         self.assertTrue(any('tidak boleh melebihi' in error.value for error in self.app.error))
         self.assertNotIn('manual_result',self.app.session_state)
         self.app.number_input(key='manual_semester').set_value(1).run()
-        self.app.button[0].click().run()
+        button(self.app,'Analisis perwalian').click().run()
         self.assertFalse(self.app.exception)
         self.assertEqual(self.app.metric[3].value,'Paket prodi')
     def test_status_filters_and_search(self):
-        self.app.get('button_group')[0].set_value('Prioritas').run()
+        control(self.app,'risk_filter').set_value('Prioritas').run()
         self.assertFalse(self.app.exception)
         table=self.app.dataframe[0].value
         self.assertEqual(len(table),7)
@@ -75,12 +86,12 @@ class AppTestCase(unittest.TestCase):
         self.app.text_input(key='student_search').set_value('18724001').run()
         self.assertEqual(len(self.app.dataframe),0)
         self.assertTrue(any('Tidak ada mahasiswa' in x.value for x in self.app.info))
-        self.app.button[-1].click().run()
-        self.assertEqual(self.app.get('button_group')[0].value,'Semua')
+        button(self.app,'Tampilkan semua').click().run()
+        self.assertEqual(control(self.app,'risk_filter').value,'Semua')
         self.assertEqual(self.app.text_input(key='student_search').value,'')
         self.assertEqual(len(self.app.dataframe[0].value),10)
     def test_search_resets_page(self):
-        self.app.button[1].click().run()
+        button(self.app,'Lanjut').click().run()
         self.assertEqual(self.app.session_state['list_page'],2)
         self.app.text_input(key='student_search').set_value('18724001').run()
         self.assertEqual(self.app.session_state['list_page'],1)
@@ -96,13 +107,13 @@ class AppTestCase(unittest.TestCase):
                   'Akademik Universitas':['Rekap Universitas','Pedoman'],
                   'Mahasiswa':['Studi Saya','Cek Individu','Pedoman'],
                   'Dosen Wali':['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']}
-        self.app.radio(key='menu').set_value('Cek Individu').run()
+        control(self.app,'menu').set_value('Cek Individu').run()
         for role,menu in expected.items():
-            self.app.radio(key='menu').set_value('Pedoman').run()
+            control(self.app,'menu').set_value('Pedoman').run()
             with self.subTest(role=role):
                 self.set_role(role)
-                self.assertEqual(list(self.app.radio(key='menu').options),menu)
-                self.assertEqual(self.app.radio(key='menu').value,menu[0])
+                self.assertEqual(list(control(self.app,'menu').options),[LABELS[m] for m in menu])
+                self.assertEqual(control(self.app,'menu').value,menu[0])
     def test_coordinator_follow_up(self):
         self.set_role('Koordinator Program Studi')
         self.assertEqual([m.value for m in self.app.metric],['30','8','15','7'])
@@ -149,14 +160,30 @@ class AppTestCase(unittest.TestCase):
         for role,allowed in expected.items():
             with self.subTest(role=role):
                 self.set_role(role)
-                self.app.radio(key='menu').set_value('Pedoman').run()
+                control(self.app,'menu').set_value('Pedoman').run()
                 self.assertFalse(self.app.exception)
                 labels={b.proto.label for b in self.app.get('download_button')}
                 self.assertIn('Unduh kurikulum_2021.csv',labels)
                 self.assertEqual(personal<=labels,allowed)
                 if not allowed: self.assertFalse(personal&labels)
+    def test_top_bar_navigation(self):
+        nav=control(self.app,'menu')
+        self.assertEqual(list(nav.options),['Dashboard','Perwalian','Cek Individu','Pedoman'])
+        nav.set_value(None).run()  # mengklik pilihan aktif tidak boleh mengosongkan halaman
+        self.assertFalse(self.app.exception)
+        self.assertEqual(control(self.app,'menu').value,'Dashboard Angkatan 2024')
+        self.assertEqual(self.app.metric[0].value,'30')
+        button(self.app,'Ganti peran').click().run()
+        self.assertFalse(self.app.exception)
+        self.assertIsNone(self.app.selectbox(key='peran').value)
+        self.assertEqual(len(self.app.metric),0)
+        self.assertEqual(len([b for b in self.app.button if b.label=='Masuk']),6)
+    def test_notes_collapsed_except_guidelines(self):
+        self.assertTrue(any(e.label=='Catatan syarat kelulusan dan sumber aturan' and not e.proto.expanded for e in self.app.expander))
+        control(self.app,'menu').set_value('Pedoman').run()
+        self.assertTrue(any(e.label=='Catatan syarat kelulusan dan sumber aturan' and e.proto.expanded for e in self.app.expander))
     def test_guidelines(self):
-        self.app.radio(key='menu').set_value('Pedoman').run()
+        control(self.app,'menu').set_value('Pedoman').run()
         self.assertFalse(self.app.exception)
         self.assertTrue(any('tidak boleh ada nilai E' in x.value for x in self.app.info))
 

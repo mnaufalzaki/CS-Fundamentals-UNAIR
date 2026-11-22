@@ -38,6 +38,7 @@ PAGE_KPS='Monitoring Program Studi'
 PAGE_FAKULTAS='Administrasi Evaluasi Studi'
 PAGE_DEKAN='Ringkasan Pimpinan Fakultas'
 PAGE_UNIV='Rekap Universitas'
+PAGE_MHS='Studi Saya'
 # Peran mengikuti pembagian tugas pada pedoman FST. Pemilihan peran membatasi tampilan, bukan autentikasi.
 ROLES={
     'Dosen Wali':MENU,
@@ -45,8 +46,10 @@ ROLES={
     'Akademik Fakultas':[PAGE_FAKULTAS,MENU[3]],
     'Dekan':[PAGE_DEKAN,MENU[3]],
     'Akademik Universitas':[PAGE_UNIV,MENU[3]],
+    'Mahasiswa':[PAGE_MHS,MENU[2],MENU[3]],
 }
 ROLE_SCOPE={
+    'Mahasiswa':'Konsultasi dengan dosen wali sebelum mengisi KRS, lalu mengisi KRS di Cyber Campus untuk disetujui (PDF hlm. 23, 26). Hanya data diri sendiri.',
     'Dosen Wali':'Perwalian dan persetujuan KRS mahasiswa bimbingan (PDF hlm. 23, 27–28).',
     'Koordinator Program Studi':'Membantu Wakil Dekan bidang akademik memantau kegiatan akademik program studi (PDF hlm. 15).',
     'Akademik Fakultas':'Sub Bagian Akademik: transkrip, daftar perwalian, dan administrasi evaluasi studi (PDF hlm. 20, 25–26).',
@@ -374,6 +377,35 @@ elif page==PAGE_UNIV:
                        file_name='rekap_agregat_fst_si_2024.csv',mime='text/csv')
     st.caption('Dataset simulasi hanya mencakup satu program studi dan satu angkatan. Identitas mahasiswa tidak ditampilkan pada tingkat universitas; '
                'penetapan sanksi dan penghentian studi oleh Rektor memerlukan usulan resmi dari fakultas.')
+
+elif page==PAGE_MHS:
+    hero('Studi Saya',f'Persiapan perwalian awal semester {period} · KHS sampai semester {period-1}')
+    # Identitas lewat NIM, bukan daftar pilihan, agar nama mahasiswa lain tidak terlihat.
+    own_nim=st.text_input('NIM kamu',placeholder='Contoh: 18724001',key='mahasiswa_nim').strip()
+    st.caption('Simulasi tanpa login. Pada sistem nyata, NIM diambil dari akun Cyber Campus.')
+    match=students[students.nim==own_nim]
+    if not own_nim:
+        st.info('Masukkan NIM untuk melihat ringkasan studi, batas SKS, dan saran persiapan KRS.')
+    elif match.empty:
+        st.error('NIM tidak ditemukan pada dataset simulasi angkatan 2024.')
+    else:
+        me=next(match.itertuples())
+        own_snap=student_snapshot(me,period,max_credits(semester_summary(grades,catalog,me.nim,period-1)['ips']))
+        planned=st.number_input('Rencana total SKS KRS',min_value=0,max_value=60,value=max_credits(own_snap.ips),step=1,key=f'mhs_krs_{me.nim}_{period}')
+        show_result(analyze(student_snapshot(me,period,planned)))
+        st.subheader('Langkah perwalian')
+        for step in ['Konsultasikan strategi studi dan rencana KRS dengan dosen wali, termasuk peringatan di atas.',
+                     'Isi KRS yang telah dikonsultasikan di Cyber Campus dengan user ID masing-masing.',
+                     'Laporkan ke dosen wali untuk approval KRS. Perubahan hanya pada masa KPRS dengan persetujuan dosen wali.']:
+            st.write('• '+step)
+        st.caption('PDF hlm. 23 / tercetak 19 dan hlm. 26 / tercetak 22. Hasil aplikasi tidak menggantikan approval dosen wali.')
+        st.subheader('Riwayat KHS')
+        history=pd.DataFrame([semester_summary(grades,catalog,me.nim,s) for s in range(1,period)])
+        st.dataframe(history.drop(columns='nim').rename(columns={'semester':'Semester','ips':'IPS','ipk':'IPK','sks_diambil':'SKS diambil','sks_lulus':'SKS lulus kumulatif','sks_baru_lulus':'SKS baru lulus','sks_d':'SKS D berlaku'}),hide_index=True,width='stretch')
+        fig=px.line(history,x='semester',y=['ips','ipk'],markers=True,color_discrete_sequence=['#0b4f89','#bc8c2c'])
+        fig.update_layout(height=260,xaxis=dict(title='Semester selesai',dtick=1),yaxis=dict(title='Indeks prestasi',range=[0,4.1]),legend_title_text=None)
+        st.plotly_chart(fig,width='stretch',config={'displayModeBar':False})
+    notes()
 
 elif page==MENU[0]:
     hero('Perwalian Angkatan 2024', f'Simulasi awal semester {period} · Ringkasan KHS sampai semester {period-1}')

@@ -81,6 +81,7 @@ class AppTestCase(unittest.TestCase):
                   'Akademik Fakultas':['Administrasi Evaluasi Studi','Pedoman'],
                   'Dekan':['Ringkasan Pimpinan Fakultas','Pedoman'],
                   'Akademik Universitas':['Rekap Universitas','Pedoman'],
+                  'Mahasiswa':['Studi Saya','Cek Individu','Pedoman'],
                   'Dosen Wali':['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']}
         self.app.radio(key='menu').set_value('Cek Individu').run()
         for role,menu in expected.items():
@@ -113,6 +114,21 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(list(recap['Awal semester']),[2,3,4,5])
         self.assertFalse({'NIM','Nama'} & set(recap.columns))
         self.assertEqual(int(recap.loc[recap['Awal semester']==5,'Prioritas'].iloc[0]),7)
+    def test_student_sees_only_own_data(self):
+        self.set_role('Mahasiswa')
+        self.assertEqual(len(self.app.selectbox),2)  # hanya peran dan periode; tanpa daftar nama mahasiswa
+        self.assertEqual(len(self.app.dataframe),0)
+        self.assertTrue(any('Masukkan NIM' in x.value for x in self.app.info))
+        self.app.text_input(key='mahasiswa_nim').set_value('99999999').run()
+        self.assertTrue(any('tidak ditemukan' in x.value for x in self.app.error))
+        self.app.text_input(key='mahasiswa_nim').set_value('18724001').run()
+        self.assertFalse(self.app.exception)
+        self.assertEqual(self.app.metric[2].value,'80')
+        history=self.app.dataframe[0].value
+        self.assertEqual(list(history.Semester),[1,2,3,4])
+        self.assertNotIn('Nama',history.columns)
+        self.app.number_input(key='mhs_krs_18724001_5').set_value(25).run()
+        self.assertTrue(any('melampaui' in error.value for error in self.app.error))
     def test_guidelines(self):
         self.app.radio(key='menu').set_value('Pedoman').run()
         self.assertFalse(self.app.exception)

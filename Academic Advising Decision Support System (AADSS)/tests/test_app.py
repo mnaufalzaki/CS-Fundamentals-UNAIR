@@ -72,6 +72,47 @@ class AppTestCase(unittest.TestCase):
         self.app.text_input(key='student_search').set_value('18724001').run()
         self.assertEqual(self.app.session_state['list_page'],1)
         self.assertEqual(self.app.dataframe[0].value.iloc[0]['NIM'],'18724001')
+    def set_role(self,role):
+        self.app.selectbox(key='peran').set_value(role).run()
+        self.assertFalse(self.app.exception)
+    def test_role_menus(self):
+        # Dosen Wali terakhir agar setiap langkah benar-benar mengganti peran.
+        expected={'Koordinator Program Studi':['Monitoring Program Studi','Perwalian Mahasiswa','Cek Individu','Pedoman'],
+                  'Akademik Fakultas':['Administrasi Evaluasi Studi','Pedoman'],
+                  'Dekan':['Ringkasan Pimpinan Fakultas','Pedoman'],
+                  'Akademik Universitas':['Rekap Universitas','Pedoman'],
+                  'Dosen Wali':['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']}
+        self.app.radio(key='menu').set_value('Cek Individu').run()
+        for role,menu in expected.items():
+            self.app.radio(key='menu').set_value('Pedoman').run()
+            with self.subTest(role=role):
+                self.set_role(role)
+                self.assertEqual(list(self.app.radio(key='menu').options),menu)
+                self.assertEqual(self.app.radio(key='menu').value,menu[0])
+    def test_coordinator_follow_up(self):
+        self.set_role('Koordinator Program Studi')
+        self.assertEqual([m.value for m in self.app.metric],['30','8','15','7'])
+        table=self.app.dataframe[0].value
+        self.assertEqual(len(table),22)
+        self.assertNotIn('Tanpa peringatan',set(table.Status))
+    def test_faculty_evaluation_list(self):
+        self.set_role('Akademik Fakultas')
+        self.assertEqual([m.value for m in self.app.metric],['7','0','0','4'])
+        self.assertEqual(len(self.app.dataframe[0].value),11)
+        self.app.selectbox(key='periode').set_value(2).run()
+        self.assertFalse(self.app.exception)
+        self.assertEqual(self.app.metric[0].value,'0')
+    def test_dean_summary(self):
+        self.set_role('Dekan')
+        self.assertEqual(self.app.metric[3].value,'7 (23%)')
+        self.assertEqual(list(self.app.dataframe[0].value.columns),['NIM','Nama','Tahap','SKS lulus','IPK'])
+        self.assertTrue(any('pertimbangan dosen wali' in x.value for x in self.app.info))
+    def test_university_recap_has_no_identity(self):
+        self.set_role('Akademik Universitas')
+        recap=self.app.dataframe[0].value
+        self.assertEqual(list(recap['Awal semester']),[2,3,4,5])
+        self.assertFalse({'NIM','Nama'} & set(recap.columns))
+        self.assertEqual(int(recap.loc[recap['Awal semester']==5,'Prioritas'].iloc[0]),7)
     def test_guidelines(self):
         self.app.radio(key='menu').set_value('Pedoman').run()
         self.assertFalse(self.app.exception)

@@ -53,7 +53,8 @@ class RulesTest(unittest.TestCase):
         self.assertEqual(r['tingkat'],0);self.assertIsNone(r['proporsi_d'])
     def test_invalid_input(self):
         for changes in [dict(sks_d=81),dict(sks_lulus=-1),dict(ips=4.1),dict(ipk=float('nan')),
-                        dict(ips=None),dict(semester_akan=0),dict(rencana_sks=1.5),dict(sks_lulus=97)]:
+                        dict(ips=None),dict(semester_akan=0),dict(rencana_sks=1.5),dict(sks_lulus=97),
+                        dict(sks_lulus=0,ips=0,ipk=2.5),dict(sks_lulus=0,ips=3.0,ipk=0)]:
             with self.subTest(changes=changes):
                 with self.assertRaises(ValueError): analyze(self.sample(**changes))
     def test_retake_and_manual_math(self):

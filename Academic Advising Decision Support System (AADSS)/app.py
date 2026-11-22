@@ -34,6 +34,35 @@ h1,h2,h3 {color:#073566;}
 </style>''',unsafe_allow_html=True)
 COLORS={LEVELS[0]:'#1b7b6c',LEVELS[1]:'#c38a18',LEVELS[2]:'#b64046'}
 MENU=['Dashboard Angkatan 2024','Perwalian Mahasiswa','Cek Individu','Pedoman']
+PAGE_KPS='Monitoring Program Studi'
+PAGE_FAKULTAS='Administrasi Evaluasi Studi'
+PAGE_DEKAN='Ringkasan Pimpinan Fakultas'
+PAGE_UNIV='Rekap Universitas'
+# Peran mengikuti pembagian tugas pada pedoman FST. Pemilihan peran membatasi tampilan, bukan autentikasi.
+ROLES={
+    'Dosen Wali':MENU,
+    'Koordinator Program Studi':[PAGE_KPS,MENU[1],MENU[2],MENU[3]],
+    'Akademik Fakultas':[PAGE_FAKULTAS,MENU[3]],
+    'Dekan':[PAGE_DEKAN,MENU[3]],
+    'Akademik Universitas':[PAGE_UNIV,MENU[3]],
+}
+ROLE_SCOPE={
+    'Dosen Wali':'Perwalian dan persetujuan KRS mahasiswa bimbingan (PDF hlm. 23, 27–28).',
+    'Koordinator Program Studi':'Membantu Wakil Dekan bidang akademik memantau kegiatan akademik program studi (PDF hlm. 15).',
+    'Akademik Fakultas':'Sub Bagian Akademik: transkrip, daftar perwalian, dan administrasi evaluasi studi (PDF hlm. 20, 25–26).',
+    'Dekan':'Pimpinan fakultas: atas pertimbangan dosen wali mengusulkan penghentian studi kepada Rektor (PDF hlm. 29).',
+    'Akademik Universitas':'Tingkat universitas: Rektor menetapkan sanksi dan penghentian studi (PDF hlm. 26, 29). Data agregat tanpa identitas.',
+}
+ALERT_LABELS={'IPK':'IPK di bawah 2,00','EVAL_4':'Evaluasi 4 semester belum terpenuhi',
+    'EVAL_8':'Evaluasi 8 semester belum terpenuhi','D':'SKS D melebihi 20%','KRS':'Rencana KRS melebihi batas',
+    'PROGRES':'Estimasi melewati 8 semester','LAJU_NOL':'Laju SKS nol',
+    'MASA':'Melewati batas studi 14 semester','MASA_ESTIMASI':'Estimasi melewati 14 semester'}
+# Tahap evaluasi penghentian studi tetap (PDF hlm. 28) dan kode peringatan yang memicunya.
+EVALUATION_STAGES={'EVAL_4':'Evaluasi I · 4 semester','EVAL_8':'Evaluasi II · 8 semester',
+    'MASA':'Evaluasi III · melewati 14 semester','MASA_ESTIMASI':'Risiko Evaluasi III · estimasi > 14 semester'}
+EVALUATION_MINIMUM={'EVAL_4':'≥ 40 SKS dan IPK ≥ 2,00','EVAL_8':'≥ 80 SKS dan IPK ≥ 2,00',
+    'MASA':'Maksimal 14 semester tanpa cuti','MASA_ESTIMASI':'144 SKS sebelum akhir semester 14'}
+PERIODS=[2,3,4,5]
 
 @st.cache_data
 def validated_data():
@@ -51,12 +80,20 @@ if errors:
     st.stop()
 students, grades, catalog, stored=frames
 
+def reset_menu_for_role():
+    st.session_state['menu']=ROLES[st.session_state['peran']][0]
+
+
 with st.sidebar:
     st.markdown('### SI · UNAIR')
     st.caption('FAKULTAS SAINS DAN TEKNOLOGI')
-    page=st.radio('Menu',MENU,key='menu')
+    role=st.selectbox('Peran pengguna',list(ROLES),key='peran',on_change=reset_menu_for_role)
+    st.caption('Simulasi peran tanpa login: membatasi tampilan, bukan pengamanan data.')
+    if st.session_state.get('menu') not in ROLES[role]:
+        st.session_state['menu']=ROLES[role][0]
+    page=st.radio('Menu',ROLES[role],key='menu')
     st.divider()
-    period=st.selectbox('Perwalian awal semester',[2,3,4,5],index=3,key='periode')
+    period=st.selectbox('Perwalian awal semester',PERIODS,index=3,key='periode')
     st.caption(f'Simulasi angkatan 2024 · KHS sampai semester {period-1}.')
     st.caption('30 mahasiswa sintetis · Kurikulum 2021 · Tanpa cuti')
     st.divider()
@@ -65,6 +102,7 @@ with st.sidebar:
 
 def hero(title, subtitle):
     st.markdown(f'<div class="hero"><div class="eyebrow">SISTEM INFORMASI · FST · UNIVERSITAS AIRLANGGA</div><h1>{html.escape(title)}</h1><p>{html.escape(subtitle)}</p></div>',unsafe_allow_html=True)
+    st.caption(f'Peran: **{role}** · {ROLE_SCOPE[role]}')
 
 
 def notes():
@@ -186,7 +224,158 @@ def show_result(result):
     st.download_button('Unduh hasil individu (JSON)',json.dumps(result,ensure_ascii=False,indent=2),file_name=f"analisis_{data['nim'] or 'individu'}_semester_{data['semester_akan']}.json",mime='application/json',key='download_result')
 
 
-if page==MENU[0]:
+@st.cache_data
+def cohort_analysis(period):
+    """Analisis seluruh angkatan untuk satu periode; rencana KRS diasumsikan sama dengan batas SKS."""
+    rows=[]
+    for student in students.itertuples():
+        summary=semester_summary(grades,catalog,student.nim,period-1)
+        cap=max_credits(summary['ips'])
+        result=analyze(Snapshot(period,summary['ips'],summary['ipk'],summary['sks_lulus'],summary['sks_d'],cap,student.nama,student.nim))
+        rows.append({'Nama':student.nama,'NIM':student.nim,'IPK':summary['ipk'],'SKS lulus':summary['sks_lulus'],
+            'Status':result['kategori'],'Estimasi semester 144 SKS':result['estimasi_semester'],
+            'Alasan':'; '.join(x['judul'] for x in result['peringatan']) or '—',
+            '_tingkat':result['tingkat'],'_kode':[x['kode'] for x in result['peringatan']]})
+    return pd.DataFrame(rows)
+
+
+def status_counts(df):
+    return {SHORT_STATUS[level]:int((df.Status==level).sum()) for level in LEVELS}
+
+
+def status_metrics(df, percent=False):
+    cols=st.columns(4)
+    cols[0].metric('Mahasiswa',len(df))
+    for col,(label,count) in zip(cols[1:],status_counts(df).items()):
+        col.metric(label,f'{count} ({count/len(df):.0%})' if percent else count)
+
+
+def status_trend_chart():
+    trend=pd.DataFrame([{'Awal semester':p,**status_counts(cohort_analysis(p))} for p in PERIODS])
+    fig=go.Figure([go.Bar(name=label,x=trend['Awal semester'],y=trend[label],marker_color=COLORS[level],
+                          text=trend[label],textposition='inside')
+                   for level,label in SHORT_STATUS.items()])
+    fig.update_layout(barmode='stack',height=280,margin=dict(l=0,r=0,t=8,b=5),legend_title_text=None,
+                      legend=dict(orientation='h',y=-0.25),paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)',
+                      xaxis=dict(title='Perwalian awal semester',dtick=1),yaxis=dict(title='Mahasiswa'))
+    st.plotly_chart(fig,width='stretch',config={'displayModeBar':False})
+    return trend
+
+
+def alert_frequency(df):
+    codes=df['_kode'].explode().dropna()
+    freq=codes.map(ALERT_LABELS).value_counts().rename_axis('Peringatan').reset_index(name='Mahasiswa')
+    return freq
+
+
+def evaluation_cases(df):
+    rows=[]
+    for row in df.to_dict('records'):
+        for code in row['_kode']:
+            if code in EVALUATION_STAGES:
+                rows.append({'NIM':row['NIM'],'Nama':row['Nama'],'Tahap':EVALUATION_STAGES[code],
+                             'Ketentuan':EVALUATION_MINIMUM[code],'SKS lulus':row['SKS lulus'],'IPK':row['IPK'],
+                             'Estimasi semester 144 SKS':row['Estimasi semester 144 SKS']})
+    return pd.DataFrame(rows,columns=['NIM','Nama','Tahap','Ketentuan','SKS lulus','IPK','Estimasi semester 144 SKS'])
+
+
+if page==PAGE_KPS:
+    hero('Monitoring Program Studi',f'S1 Sistem Informasi · Angkatan 2024 · Awal semester {period}')
+    df=cohort_analysis(period)
+    status_metrics(df)
+    left,right=st.columns(2)
+    with left:
+        st.subheader('Tren status per periode')
+        status_trend_chart()
+    with right:
+        st.subheader(f'Jenis peringatan · awal semester {period}')
+        freq=alert_frequency(df)
+        if len(freq):
+            fig=px.bar(freq,x='Mahasiswa',y='Peringatan',orientation='h',text='Mahasiswa',color_discrete_sequence=['#0b4f89'])
+            fig.update_layout(height=280,margin=dict(l=0,r=20,t=8,b=5),yaxis=dict(title=None,categoryorder='total ascending'),
+                              xaxis=dict(title='Mahasiswa',dtick=5),paper_bgcolor='rgba(0,0,0,0)',plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig,width='stretch',config={'displayModeBar':False})
+        else:
+            st.info('Tidak ada peringatan pada periode ini.')
+    st.subheader('Daftar tindak lanjut')
+    follow=df[df._tingkat>0].sort_values(['_tingkat','Nama'],ascending=[False,True]).reset_index(drop=True)
+    follow['Tindak lanjut']=follow._tingkat.map({2:'Koordinasikan dengan dosen wali; siapkan bahan evaluasi studi untuk pimpinan fakultas',
+                                                 1:'Pantau melalui perwalian dosen wali'})
+    st.caption(f'{len(follow)} mahasiswa dengan peringatan · Pilih baris untuk membuka detail perwalian.')
+    if len(follow):
+        shown=follow[['Nama','NIM','Status','Alasan','Tindak lanjut']].copy()
+        shown['Status']=shown.Status.map(SHORT_STATUS)
+        table_key=f'kps_table_{period}'
+        st.dataframe(shown.style.map(status_style,subset=['Status']),hide_index=True,width='stretch',
+                     key=table_key,on_select=partial(open_selected_student,table_key,follow.NIM.tolist()),selection_mode='single-row')
+    st.download_button('Unduh daftar tindak lanjut (CSV)',follow.drop(columns=['_tingkat','_kode']).to_csv(index=False).encode('utf-8-sig'),
+                       file_name=f'tindak_lanjut_prodi_awal_semester_{period}.csv',mime='text/csv')
+    st.caption('Rencana KRS diasumsikan sama dengan batas SKS; pemeriksaan KRS per mahasiswa ada di halaman Perwalian Mahasiswa.')
+    notes()
+
+elif page==PAGE_FAKULTAS:
+    hero('Administrasi Evaluasi Studi',f'Daftar verifikasi evaluasi · Angkatan 2024 · Awal semester {period}')
+    st.write('Pedoman menetapkan tiga tahap evaluasi penghentian studi tetap: **Evaluasi I** setelah 4 semester, '
+             '**Evaluasi II** setelah 8 semester, dan **Evaluasi III** bila melampaui 14 semester (PDF hlm. 22, 28). '
+             'Daftar ini menandai mahasiswa yang ringkasannya belum memenuhi ketentuan, untuk dicocokkan dengan data resmi.')
+    df=cohort_analysis(period)
+    cases=evaluation_cases(df)
+    cols=st.columns(4)
+    for col,(code,label) in zip(cols,EVALUATION_STAGES.items()):
+        col.metric(label,int((cases.Tahap==label).sum()))
+    if len(cases):
+        st.dataframe(cases,hide_index=True,width='stretch',column_config={'IPK':st.column_config.NumberColumn('IPK',format='%.2f')})
+    else:
+        st.success('Tidak ada mahasiswa yang perlu diverifikasi untuk tahap evaluasi pada periode ini.')
+    st.download_button('Unduh daftar verifikasi evaluasi (CSV)',cases.to_csv(index=False).encode('utf-8-sig'),
+                       file_name=f'verifikasi_evaluasi_awal_semester_{period}.csv',mime='text/csv')
+    st.warning('Status ini berasal dari ringkasan KHS simulasi. Keputusan evaluasi resmi memerlukan transkrip dari Sub Bagian Akademik, '
+               'catatan cuti, dan pertimbangan dosen wali.')
+    st.subheader('Integritas data')
+    st.success(f'Validasi dataset: LULUS · {len(students)} mahasiswa · {len(stored)} ringkasan semester · {len(grades)} pengambilan mata kuliah.')
+    notes()
+
+elif page==PAGE_DEKAN:
+    hero('Ringkasan Pimpinan Fakultas',f'S1 Sistem Informasi · Angkatan 2024 · Awal semester {period}')
+    df=cohort_analysis(period)
+    status_metrics(df,percent=True)
+    st.subheader('Tren status angkatan')
+    status_trend_chart()
+    st.subheader('Kasus evaluasi studi untuk pertimbangan pimpinan')
+    cases=evaluation_cases(df)
+    if len(cases):
+        st.dataframe(cases[['NIM','Nama','Tahap','SKS lulus','IPK']],hide_index=True,width='stretch',
+                     column_config={'IPK':st.column_config.NumberColumn('IPK',format='%.2f')})
+    else:
+        st.success('Tidak ada kasus tahap evaluasi pada periode ini.')
+    st.info('Usulan penghentian studi kepada Rektor diajukan Dekan **atas pertimbangan dosen wali** (PDF hlm. 29). '
+            'Aplikasi ini hanya menandai kasus dari ringkasan simulasi dan tidak membuat keputusan.')
+    with st.expander('Peringatan per jenis'):
+        st.dataframe(alert_frequency(df),hide_index=True,width='stretch')
+
+elif page==PAGE_UNIV:
+    hero('Rekap Universitas','Ringkasan agregat tanpa identitas mahasiswa')
+    records=[]
+    for p in PERIODS:
+        frame=cohort_analysis(p)
+        cases=evaluation_cases(frame)
+        records.append({'Fakultas':'FST','Program studi':'S1 Sistem Informasi','Angkatan':2024,'Awal semester':p,
+                        'Mahasiswa':len(frame),**status_counts(frame),
+                        **{label:int((cases.Tahap==label).sum()) for label in EVALUATION_STAGES.values()}})
+    recap=pd.DataFrame(records)
+    current=recap[recap['Awal semester']==period].iloc[0]
+    cols=st.columns(4)
+    cols[0].metric('Mahasiswa',int(current.Mahasiswa))
+    for col,label in zip(cols[1:],SHORT_STATUS.values()):
+        col.metric(label,int(current[label]))
+    st.subheader('Rekap per periode')
+    st.dataframe(recap,hide_index=True,width='stretch')
+    st.download_button('Unduh rekap agregat (CSV)',recap.to_csv(index=False).encode('utf-8-sig'),
+                       file_name='rekap_agregat_fst_si_2024.csv',mime='text/csv')
+    st.caption('Dataset simulasi hanya mencakup satu program studi dan satu angkatan. Identitas mahasiswa tidak ditampilkan pada tingkat universitas; '
+               'penetapan sanksi dan penghentian studi oleh Rektor memerlukan usulan resmi dari fakultas.')
+
+elif page==MENU[0]:
     hero('Perwalian Angkatan 2024', f'Simulasi awal semester {period} · Ringkasan KHS sampai semester {period-1}')
     df=dashboard_rows()
     cols=st.columns(4)

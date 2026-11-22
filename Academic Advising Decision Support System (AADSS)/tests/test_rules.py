@@ -14,6 +14,10 @@ class RulesTest(unittest.TestCase):
         return Snapshot(**values)
     def codes(self,**changes):
         return {x['kode'] for x in analyze(self.sample(**changes))['peringatan']}
+    def test_rules_read_as_utf8(self):
+        from academic import RULES
+        self.assertIn('2024–2025',RULES['sumber']['versi'])
+        self.assertNotIn('â€',RULES['sumber']['versi'])
     def test_ips_boundaries(self):
         for ips,expected in [(0,15),(1.99,15),(2,18),(2.50,18),(2.51,20),(3,20),(3.01,24),(4,24)]:
             with self.subTest(ips=ips): self.assertEqual(max_credits(ips),expected)

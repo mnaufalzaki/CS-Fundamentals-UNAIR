@@ -5,7 +5,7 @@ import json
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
-RULES = json.loads((ROOT / 'rules.json').read_text())
+RULES = json.loads((ROOT / 'rules.json').read_text(encoding='utf-8'))
 
 
 def khs_round(value: float) -> float:

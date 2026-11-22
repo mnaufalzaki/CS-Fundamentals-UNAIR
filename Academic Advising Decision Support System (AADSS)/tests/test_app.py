@@ -120,6 +120,8 @@ class AppTestCase(unittest.TestCase):
         table=self.app.dataframe[0].value
         self.assertEqual(len(table),22)
         self.assertNotIn('Tanpa peringatan',set(table.Status))
+        self.assertIn('Peringatan',table.columns)
+        self.assertTrue(all(not isinstance(x,str) and len(x)>0 for x in table.Peringatan))
     def test_faculty_evaluation_list(self):
         self.set_role('Akademik Fakultas')
         self.assertEqual([m.value for m in self.app.metric],['7','0','0','4'])
@@ -130,13 +132,17 @@ class AppTestCase(unittest.TestCase):
     def test_dean_summary(self):
         self.set_role('Dekan')
         self.assertEqual(self.app.metric[3].value,'7 (23%)')
-        self.assertEqual(list(self.app.dataframe[0].value.columns),['NIM','Nama','Tahap','SKS lulus','IPK'])
+        table=self.app.dataframe[0].value
+        self.assertEqual(list(table.columns),['NIM','Nama','Tahap','SKS lulus','IPK'])
+        self.assertEqual(len(table),7)  # satu baris per mahasiswa, bukan per tahap
+        self.assertTrue(table.NIM.is_unique)
         self.assertTrue(any('pertimbangan dosen wali' in x.value for x in self.app.info))
     def test_university_recap_has_no_identity(self):
         self.set_role('Akademik Universitas')
         recap=self.app.dataframe[0].value
         self.assertEqual(list(recap['Awal semester']),[2,3,4,5])
         self.assertFalse({'NIM','Nama'} & set(recap.columns))
+        self.assertFalse({'Fakultas','Program studi','Angkatan'} & set(recap.columns))
         self.assertEqual(int(recap.loc[recap['Awal semester']==5,'Prioritas'].iloc[0]),7)
     def test_student_sees_only_own_data(self):
         self.set_role('Mahasiswa')

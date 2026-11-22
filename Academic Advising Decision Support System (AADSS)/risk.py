@@ -87,6 +87,12 @@ def analyze(s: Snapshot) -> dict:
     elif finished and not pace and remaining:
         add('LAJU_NOL', 'Estimasi belum tersedia', 'Belum ada SKS lulus untuk menghitung laju progres.',
             'Periksa kelengkapan KHS dan bahas pemulihan progres dengan dosen wali.', 'Asumsi estimasi')
+    if (estimate is not None and estimate > RULES['semester_maksimum']
+            and s.semester_akan <= RULES['semester_maksimum']):
+        add('MASA_ESTIMASI', 'Estimasi melewati batas studi 14 semester',
+            f'Dengan laju efektif {pace:.2f} SKS/semester, 144 SKS diperkirakan baru terpenuhi pada akhir semester {estimate}.',
+            'Prioritaskan konsultasi untuk menyusun rencana percepatan kredit sebelum batas studi.',
+            'PDF hlm. 20, 22 / tercetak 16, 18', True)
     if s.semester_akan > RULES['semester_maksimum']:
         add('MASA', 'Periode perwalian melewati batas studi',
             f'Perwalian awal semester {s.semester_akan}; batas kesempatan studi 14 semester tanpa cuti.',

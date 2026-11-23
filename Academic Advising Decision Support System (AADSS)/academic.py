@@ -25,6 +25,13 @@ def load_data():
                  ['mahasiswa.csv', 'nilai.csv', 'kurikulum_2021.csv', 'ringkasan_semester.csv'])
 
 
+def load_faculty_data():
+    students_fst = pd.read_csv(ROOT / 'data' / 'mahasiswa_fst.csv', dtype={'nim': str})
+    summaries_fst = pd.read_csv(ROOT / 'data' / 'ringkasan_fst.csv', dtype={'nim': str})
+    structure = json.loads((ROOT / 'data' / 'struktur_fst.json').read_text(encoding='utf-8'))
+    return students_fst, summaries_fst, structure
+
+
 def transcript_at(grades: pd.DataFrame, nim: str, finished_semester: int) -> pd.DataFrame:
     # Filter waktu lebih dahulu. Penanda akhir semester 4 tidak dipakai untuk snapshot lama.
     available = grades[(grades['nim'] == nim) & (grades['semester'] <= finished_semester)].copy()

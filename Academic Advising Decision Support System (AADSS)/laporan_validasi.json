@@ -1,16 +1,20 @@
 {
   "status": "LULUS",
   "seed": 2024,
-  "mahasiswa": 30,
-  "pengambilan_mata_kuliah": 998,
-  "ringkasan": 120,
+  "mahasiswa_prodi_si": 30,
+  "pengambilan_mata_kuliah_si": 998,
+  "ringkasan_si": 120,
+  "prodi_s1_fst": 8,
+  "dosen_wali_fst": 24,
+  "mahasiswa_fst": 222,
+  "ringkasan_fst": 888,
   "kesalahan": [],
   "asumsi": [
     "Seluruh mahasiswa tanpa cuti",
-    "NIM/nama sintetis",
+    "NIM/nama mahasiswa dan dosen wali adalah data sintetis; pimpinan fakultas mengacu pada Pedoman Pendidikan FST",
+    "Setiap dosen wali membimbing mahasiswa dengan variasi status Tanpa peringatan, Perhatian, dan Prioritas",
+    "Cakupan fakultas meliputi seluruh 8 Program Studi S1 di FST UNAIR",
     "Nilai pengulangan terbaru digunakan sebagai transkrip simulasi; bukan klaim kebijakan resmi",
-    "Komposisi skenario bukan prevalensi nyata",
-    "Katalog mendokumentasikan ECTS dan konversi SKS",
-    "Ketersediaan kelas, prasyarat rinci, jadwal dan approval dosen wali tidak disimulasikan"
+    "Katalog mendokumentasikan ECTS dan konversi SKS"
   ]
 }

@@ -1,0 +1,254 @@
+{
+  "fakultas": "Fakultas Sains dan Teknologi (FST)",
+  "universitas": "Universitas Airlangga",
+  "kampus": "Kampus C UNAIR Mulyorejo, Surabaya 60115",
+  "pimpinan": {
+    "dekan": {
+      "nama": "Prof. Dr. Miratul Khasanah, M.Si.",
+      "nip": "196703041992032001",
+      "jabatan": "Dekan Fakultas Sains dan Teknologi",
+      "periode": "2025-2030 (lanjutan 2022-2025)",
+      "departemen_asal": "Departemen Kimia"
+    },
+    "wakil_dekan": [
+      {
+        "jabatan": "Wakil Dekan I (Bidang Akademik dan Kemahasiswaan)",
+        "nama": "Dr. Eridani, M.Si."
+      },
+      {
+        "jabatan": "Wakil Dekan II (Bidang Sumber Daya dan Keuangan)",
+        "nama": "Prof. Dr. Suryani Dyah Astuti, M.Si."
+      },
+      {
+        "jabatan": "Wakil Dekan III (Bidang Riset, Inovasi, dan Komunitas)",
+        "nama": "Prof. Dr. Fatmawati, M.Si."
+      }
+    ]
+  },
+  "departemen": [
+    {
+      "nama": "Departemen Matematika",
+      "ketua": "Dr. Herry Suprajitno, M.Si.",
+      "prodi_s1": [
+        "S1 Matematika",
+        "S1 Statistika",
+        "S1 Sistem Informasi"
+      ],
+      "prodi_pascasarjana": [
+        "S2 Matematika"
+      ]
+    },
+    {
+      "nama": "Departemen Fisika",
+      "ketua": "Herri Trilaksana, Ph.D.",
+      "prodi_s1": [
+        "S1 Fisika",
+        "S1 Teknik Biomedis"
+      ],
+      "prodi_pascasarjana": [
+        "S2 Teknik Biomedis"
+      ]
+    },
+    {
+      "nama": "Departemen Kimia",
+      "ketua": "Moh. Zakki Fahmi, Ph.D.",
+      "prodi_s1": [
+        "S1 Kimia"
+      ],
+      "prodi_pascasarjana": [
+        "S2 Kimia"
+      ]
+    },
+    {
+      "nama": "Departemen Biologi",
+      "ketua": "Prof. Dr. Sri Puji Astuti, M.Si.",
+      "prodi_s1": [
+        "S1 Biologi",
+        "S1 Teknik Lingkungan"
+      ],
+      "prodi_pascasarjana": [
+        "S2 Biologi"
+      ]
+    }
+  ],
+  "prodi_s1": [
+    {
+      "prodi": "S1 Sistem Informasi",
+      "departemen": "Departemen Matematika",
+      "prefix_nim": "18724",
+      "kps": "Dr. Bambang Setiawan, S.Kom., M.Kom.",
+      "dosen_wali": [
+        "Dr. Hendra Kusuma, S.Kom., M.Kom.",
+        "Dr. Ratna Sari, S.Si., M.T.",
+        "Arif Wibowo, S.Kom., M.Sc."
+      ],
+      "jumlah_mahasiswa": 30,
+      "ada_prioritas": true
+    },
+    {
+      "prodi": "S1 Matematika",
+      "departemen": "Departemen Matematika",
+      "prefix_nim": "18124",
+      "kps": "Dr. Dian Purnamasari, S.Si., M.Si.",
+      "dosen_wali": [
+        "Dr. Agung Prabowo, S.Si., M.Si.",
+        "Lestari Handayani, S.Si., M.Sc.",
+        "Dr. Wahyu Hidayat, S.Si., M.Si."
+      ],
+      "jumlah_mahasiswa": 27,
+      "ada_prioritas": true
+    },
+    {
+      "prodi": "S1 Statistika",
+      "departemen": "Departemen Matematika",
+      "prefix_nim": "18824",
+      "kps": "Dr. Eko Tjahjono, S.Si., M.Si.",
+      "dosen_wali": [
+        "Dr. Nurul Hidayati, S.Si., M.Si.",
+        "Bagus Santoso, S.Stat., M.Si.",
+        "Dr. Rina Kusumawati, S.Si., M.Sc."
+      ],
+      "jumlah_mahasiswa": 30,
+      "ada_prioritas": false
+    },
+    {
+      "prodi": "S1 Fisika",
+      "departemen": "Departemen Fisika",
+      "prefix_nim": "18224",
+      "kps": "Dr. Andi Rahmanto, S.Si., M.Si.",
+      "dosen_wali": [
+        "Dr. Budi Darmawan, S.Si., M.Si.",
+        "Siti Aminah, S.Si., M.Sc.",
+        "Dr. Taufik Hidayat, S.Si., M.T."
+      ],
+      "jumlah_mahasiswa": 24,
+      "ada_prioritas": true
+    },
+    {
+      "prodi": "S1 Teknik Biomedis",
+      "departemen": "Departemen Fisika",
+      "prefix_nim": "18624",
+      "kps": "Dr. Rr. Retno Widyowati, S.Si., M.T.",
+      "dosen_wali": [
+        "Dr. Fajar Nugroho, S.T., M.T.",
+        "Maya Puspita, S.T., M.Sc.",
+        "Dr. Irfan Hakim, S.Si., M.T."
+      ],
+      "jumlah_mahasiswa": 27,
+      "ada_prioritas": false
+    },
+    {
+      "prodi": "S1 Kimia",
+      "departemen": "Departemen Kimia",
+      "prefix_nim": "18324",
+      "kps": "Dr. Yanuardi Raharjo, S.Si., M.Sc.",
+      "dosen_wali": [
+        "Dr. Dewi Kurniawati, S.Si., M.Si.",
+        "Hendra Wijaya, S.Si., M.Sc.",
+        "Dr. Lukman Hakim, S.Si., M.Si."
+      ],
+      "jumlah_mahasiswa": 27,
+      "ada_prioritas": true
+    },
+    {
+      "prodi": "S1 Biologi",
+      "departemen": "Departemen Biologi",
+      "prefix_nim": "18424",
+      "kps": "Dr. Dwi Winarni, S.Si., M.Si.",
+      "dosen_wali": [
+        "Dr. Rini Puspitasari, S.Si., M.Si.",
+        "Ahmad Fauzi, S.Si., M.Sc.",
+        "Dr. Kartika Sari, S.Si., M.Si."
+      ],
+      "jumlah_mahasiswa": 30,
+      "ada_prioritas": false
+    },
+    {
+      "prodi": "S1 Teknik Lingkungan",
+      "departemen": "Departemen Biologi",
+      "prefix_nim": "18524",
+      "kps": "Dr. Nur Indradewi Oktavitri, S.T., M.T.",
+      "dosen_wali": [
+        "Dr. Dedi Setiawan, S.T., M.T.",
+        "Wulan Dari, S.T., M.Sc.",
+        "Dr. Rahmat Hidayat, S.T., M.T."
+      ],
+      "jumlah_mahasiswa": 27,
+      "ada_prioritas": true
+    }
+  ],
+  "prodi_s2": [
+    "S2 Biologi",
+    "S2 Teknik Biomedis",
+    "S2 Kimia",
+    "S2 Matematika"
+  ],
+  "prodi_s3": [
+    "S3 MIPA"
+  ],
+  "prodi_prioritas_unair_lain": [
+    {
+      "fakultas": "FTMM",
+      "nama_fakultas": "Fakultas Teknologi Maju dan Multidisiplin",
+      "departemen": "Departemen Teknik",
+      "prodi": "S1 Sains Data",
+      "prefix_nim": "16224",
+      "kps": "Dr. Hendri Susilo, S.Si., M.Kom.",
+      "jumlah_mahasiswa": 30
+    },
+    {
+      "fakultas": "FTMM",
+      "nama_fakultas": "Fakultas Teknologi Maju dan Multidisiplin",
+      "departemen": "Departemen Teknik",
+      "prodi": "S1 Teknik Robotika dan Kecerdasan Buatan",
+      "prefix_nim": "16324",
+      "kps": "Dr. Yoga Pradana, S.T., M.T.",
+      "jumlah_mahasiswa": 27
+    },
+    {
+      "fakultas": "FEB",
+      "nama_fakultas": "Fakultas Ekonomi dan Bisnis",
+      "departemen": "Departemen Manajemen",
+      "prodi": "S1 Manajemen",
+      "prefix_nim": "14124",
+      "kps": "Dr. Rina Wijaya, S.E., M.M.",
+      "jumlah_mahasiswa": 36
+    },
+    {
+      "fakultas": "FEB",
+      "nama_fakultas": "Fakultas Ekonomi dan Bisnis",
+      "departemen": "Departemen Akuntansi",
+      "prodi": "S1 Akuntansi",
+      "prefix_nim": "14224",
+      "kps": "Dr. Budi Santoso, S.E., M.Si., Ak.",
+      "jumlah_mahasiswa": 33
+    },
+    {
+      "fakultas": "FK",
+      "nama_fakultas": "Fakultas Kedokteran",
+      "departemen": "Departemen Kedokteran",
+      "prodi": "S1 Kedokteran",
+      "prefix_nim": "11124",
+      "kps": "Dr. dr. Arief Hidayat, M.Kes.",
+      "jumlah_mahasiswa": 36
+    },
+    {
+      "fakultas": "FISIP",
+      "nama_fakultas": "Fakultas Ilmu Sosial dan Ilmu Politik",
+      "departemen": "Departemen Komunikasi",
+      "prodi": "S1 Ilmu Komunikasi",
+      "prefix_nim": "17124",
+      "kps": "Dr. Maya Lestari, S.Sos., M.Si.",
+      "jumlah_mahasiswa": 30
+    },
+    {
+      "fakultas": "FH",
+      "nama_fakultas": "Fakultas Hukum",
+      "departemen": "Departemen Ilmu Hukum",
+      "prodi": "S1 Ilmu Hukum",
+      "prefix_nim": "13124",
+      "kps": "Dr. Danu Prasetyo, S.H., M.H.",
+      "jumlah_mahasiswa": 33
+    }
+  ]
+}

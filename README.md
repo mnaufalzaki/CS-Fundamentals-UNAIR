@@ -30,6 +30,7 @@ flowchart TD
     Primary --> P2[Credit Default Risk AI]
     Primary --> P3[Academic Advising DSS]
     Primary --> P4[Stock Price Prediction]
+    Primary --> P5[Rossmann Sales Forecasting]
 
     Coursework --> C1[Data Preprocessing]
     C1 --> D1[Data Normalization]
@@ -79,6 +80,14 @@ A model pipeline that predicts the price direction of BBCA (Bank Central Asia) s
 - **Random Forest** classifies positive or negative price direction.
 - **Decision threshold tuning** maximizes precision to reduce losing trades.
 - Full analytics: ROC-AUC curves, GA fitness history, ablation studies, and multi-seed experiments.
+
+### 5. [`Rossmann Sales Forecasting`](./Rossmann%20Sales%20Forecasting)
+
+An empirical benchmarking and feature ablation study reproducing Albassam et al. (2026) on the **Rossmann Store Sales** dataset.
+
+- Compares **7 tree-based models** (`RandomForest`, `ExtraTrees`, `XGBoost`, `HistGradientBoosting`, `GradientBoosting`, `DecisionTree`, `AdaBoost`) across **5 preprocessing configurations (`C1`-`C5`)** and **3 classical baselines** (`Ridge`, `Seasonal-Naive`, per-store `ETS`).
+- Conducts controlled **feature ablation** for the `Customers` variable and seasonal/promotional features using chronological 80/20 splits and 5-fold `TimeSeriesSplit`.
+- Includes Diebold-Mariano significance tests (Newey-West HAC, Holm-Bonferroni), sensitivity analysis, SHAP interpretability, and automatic checkpoint/resume support.
 
 ---
 

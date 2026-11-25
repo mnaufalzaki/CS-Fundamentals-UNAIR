@@ -1,0 +1,7 @@
+# Raw Kaggle dataset (download from https://www.kaggle.com/c/rossmann-store-sales)
+data/*.csv
+data/*.zip
+
+# Generated experiment artifacts and checkpoints
+outputs/
+__pycache__/

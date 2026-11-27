@@ -1,5 +1,7 @@
 """Core training and cross-validation benchmark engine with checkpoint/resume support."""
 
+import hashlib
+import json
 import time
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -18,6 +20,7 @@ from .config import (
     N_ESTIMATORS,
     N_SPLITS_CV,
     RANDOM_STATE,
+    DATE_COL,
     TARGET_COL,
 )
 from .metrics import compute_metrics
@@ -79,11 +82,14 @@ def evaluate_single_experiment(
     cv_r2_mean = np.nan
     cv_r2_std = np.nan
     if run_cv:
+        unique_dates = np.sort(df[DATE_COL].unique())
         tscv = TimeSeriesSplit(n_splits=n_splits)
         X_all = df[feature_cols]
         y_all = df[TARGET_COL].values
         fold_scores = []
-        for tr_idx, te_idx in tscv.split(X_all):
+        for tr_dates, te_dates in tscv.split(unique_dates):
+            tr_idx = np.flatnonzero(df[DATE_COL].isin(unique_dates[tr_dates]).to_numpy())
+            te_idx = np.flatnonzero(df[DATE_COL].isin(unique_dates[te_dates]).to_numpy())
             X_tr_fold = X_all.iloc[tr_idx]
             y_tr_fold = y_all[tr_idx]
             X_te_fold = X_all.iloc[te_idx]
@@ -165,8 +171,29 @@ def run_benchmark_suite(
     ckpt_records: Dict[Tuple[str, str], Dict] = {}
 
     if checkpoint_dir is not None:
-        ckpt_csv = Path(checkpoint_dir) / f"benchmark_{scenario_key}.csv"
-        preds_dir = Path(checkpoint_dir) / "preds"
+        # A checkpoint is reusable only with identical data and experiment settings.
+        data_hash = hashlib.sha256(
+            pd.util.hash_pandas_object(df, index=False).values.tobytes()
+        ).hexdigest()
+        settings = {
+            "checkpoint_format": 2,
+            "data_hash": data_hash,
+            "n_estimators": n_estimators,
+            "n_splits": n_splits,
+            "run_cv": run_cv,
+            "random_state": RANDOM_STATE,
+            "scenario": scenario_key,
+        }
+        run_hash = hashlib.sha256(
+            json.dumps(settings, sort_keys=True).encode("utf-8")
+        ).hexdigest()[:16]
+        run_dir = Path(checkpoint_dir) / run_hash
+        run_dir.mkdir(parents=True, exist_ok=True)
+        (run_dir / "settings.json").write_text(
+            json.dumps(settings, indent=2), encoding="utf-8"
+        )
+        ckpt_csv = run_dir / f"benchmark_{scenario_key}.csv"
+        preds_dir = run_dir / "preds"
         preds_dir.mkdir(parents=True, exist_ok=True)
         if not force_rerun:
             ckpt_records = _load_checkpoint(ckpt_csv)

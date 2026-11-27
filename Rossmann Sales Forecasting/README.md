@@ -12,6 +12,8 @@ Artikel lengkap tersedia di: [docs/Albassam_2026_Retail_Sales_Forecasting_Tree_B
 
 Pipeline eksperimen mengevaluasi 7 model *tree-based* dan 3 baseline klasik pada dataset **Rossmann Store Sales** (1.115 toko, 1.017.209 baris mentah; 844.338 baris hari operasional `Open == 1` dan `Sales > 0`) dengan validasi kronologis ketat untuk mencegah *temporal data leakage*.
 
+**Catatan implementasi:** Pembaca data menerima CSV dengan pemisah koma (Kaggle) maupun titik koma (salinan pada proyek ini), dan tanggal ISO maupun `dd/mm/yyyy`. Holdout dibagi mendekati rasio 80/20 pada batas tanggal utuh. Lima fold validasi juga dipisahkan berdasarkan tanggal unik. Penyaringan hari operasional adalah pilihan implementasi proyek yang membatasi cakupan hasil. Angka pada bagian “Ringkasan Hasil Penelitian” merupakan hasil artikel, bukan output yang otomatis dihasilkan proyek ini.
+
 ### 1. Konfigurasi Preprocessing (C1 sampai C5)
 Seluruh transformasi dipasang di dalam `sklearn.pipeline.Pipeline` sehingga statistik imputasi dan skema encoding hanya dipelajari dari data latih:
 
@@ -31,7 +33,7 @@ Seluruh konfigurasi `C1` sampai `C5` dijalankan paralel pada dua kondisi:
 ### 3. Model, Validasi, dan Uji Statistik
 - **7 Model Tree-Based** (`random_state=42`, `100` estimator, tanpa tuning hiperparameter): `AdaBoost`, `DecisionTree` (`max_depth=10`), `ExtraTrees`, `GradientBoosting` (early stopping patience 10), `HistGradientBoosting`, `RandomForest`, dan `XGBoost`.
 - **3 Baseline Klasik** (pada C3 tanpa `Customers`): `Ridge Regression` (`alpha=1.0`), `Seasonal-Naive` (lag-7 dengan backoff), dan `ETS` per toko (Holt-Winters *additive damped trend* + *additive weekly seasonality*).
-- **Strategi Validasi:** Split kronologis tetap **80/20** untuk metrik utama (`RMSE`, `RMSE%` terhadap rata-rata `y_train`, `MAE`, `R²`) dan **5-fold `TimeSeriesSplit`** (`CV R²` dan standar deviasi `σ`).
+- **Strategi Validasi:** Split kronologis **mendekati 80/20 pada batas tanggal** untuk metrik utama (`RMSE`, `RMSE%` terhadap rata-rata `y_train`, `MAE`, `R²`) dan **5-fold `TimeSeriesSplit` pada tanggal unik** (`CV R²` dan standar deviasi `σ`).
 - **Uji Signifikansi:** Diebold-Mariano test pada error harian (MAE & MSE, `T = 183` hari validasi) dengan Newey-West HAC variance (`lag = 7`) dan koreksi Holm-Bonferroni.
 - **Interpretabilitas:** Tree feature importance dan `shap.TreeExplainer` pada 500 sampel validasi (`random_state=42`) dengan agregasi ke 5 kategori (`Promotional`, `Competition`, `Store`, `Calendar/Temporal`, `Customer`).
 
@@ -126,6 +128,31 @@ Rossmann Sales Forecasting/
 
 ## Cara Menjalankan
 
+### Perbandingan pembagian training dan testing
+
+Gunakan `compare_splits.py` untuk eksperimen tambahan Random Forest C3 tanpa `Customers`.
+Program membandingkan pembagian kronologis 70:30, 80:20, dan 90:10 pada batas tanggal
+utuh. Untuk setiap pembagian, tersedia metrik **training dan testing** (MAE, RMSE,
+RMSE%, R²), persentase baris aktual, rentang tanggal, serta selisih R² dan RMSE.
+
+```bash
+# Uji cepat dengan 25 toko dan 20 pohon; hasil ini hanya untuk mengecek kode
+python compare_splits.py --sample-stores 25 --n-estimators 20
+
+# Eksperimen data penuh dengan 100 pohon
+python compare_splits.py --n-jobs 4
+```
+
+Hasil tersimpan di subfolder bertanggal dalam `outputs/split_comparison/`:
+`train_test_metrics.csv`, `generalization_gaps.csv`, grafik perbandingan
+R²/RMSE/MAE, dan grafik aktual versus prediksi untuk ketiga split.
+Tambahkan `--include-customers` hanya jika ingin menguji skenario pelanggan
+aktual; `--skip-plots` hanya untuk pengujian tanpa grafik. Rasio nominal dapat
+sedikit berbeda dari persentase baris aktual karena semua toko pada tanggal yang
+sama ditempatkan di sisi pembagian yang sama. Periode testing pada ketiga rasio
+berbeda, sehingga angka testing **tidak boleh ditafsirkan sebagai pemilihan
+rasio terbaik yang berlaku umum**.
+
 ### 1. Persiapan Dataset & Dependensi
 Unduh dataset [Rossmann Store Sales (Kaggle)](https://www.kaggle.com/c/rossmann-store-sales) lalu ekstrak `train.csv` dan `store.csv` ke folder `data/`.
 
@@ -135,6 +162,8 @@ pip install -r requirements.txt
 
 ### 2. Mode Eksekusi (Dengan Auto-Checkpoint & Resume)
 Pipeline otomatis menyimpan hasil dan prediksi setiap selesai 1 kombinasi `(Skenario, Konfigurasi, Model)` ke `outputs/checkpoints/`. Jika proses dihentikan (`Ctrl + C`), jalankan ulang perintah yang sama dan model yang sudah selesai akan dilewati otomatis (`RESUMED`).
+
+Checkpoint sekarang dipisahkan menurut hash data dan pengaturan eksperimen. Perubahan jumlah pohon, cakupan data, atau opsi CV menggunakan checkpoint berbeda. Tabel ablasi implementasi membandingkan **C3 dengan C5**, sehingga perbedaan utamanya adalah penghapusan atribut promosi/musiman; angka C3–C4 pada artikel tetap merupakan hasil artikel.
 
 ```bash
 # 1. Uji cepat (smoke test 25 toko, ~20 detik)

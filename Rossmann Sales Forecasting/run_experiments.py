@@ -67,7 +67,7 @@ def build_seasonality_ablation_table(
     df_wo: pd.DataFrame,
     df_w: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Build Table 7: Impact of removing seasonality/promotional features (C3 vs C4)."""
+    """Compare C3 with C5 so only seasonal/promotional feature removal differs."""
     if df_wo.empty or df_w.empty:
         return pd.DataFrame()
 
@@ -75,17 +75,17 @@ def build_seasonality_ablation_table(
         c3 = df_sc[df_sc["Config"] == "C3"][["Model", "R2", "RMSE%"]].rename(
             columns={"R2": f"R2_C3_{suffix}", "RMSE%": f"RMSE%_C3_{suffix}"}
         )
-        c4 = df_sc[df_sc["Config"] == "C4"][["Model", "R2", "RMSE%"]].rename(
-            columns={"R2": f"R2_C4_{suffix}", "RMSE%": f"RMSE%_C4_{suffix}"}
+        c5 = df_sc[df_sc["Config"] == "C5"][["Model", "R2", "RMSE%"]].rename(
+            columns={"R2": f"R2_C5_{suffix}", "RMSE%": f"RMSE%_C5_{suffix}"}
         )
-        m = c3.merge(c4, on="Model")
-        m[f"Delta_R2_{suffix}"] = m[f"R2_C4_{suffix}"] - m[f"R2_C3_{suffix}"]
-        m[f"Delta_RMSE%_{suffix}"] = m[f"RMSE%_C4_{suffix}"] - m[f"RMSE%_C3_{suffix}"]
+        m = c3.merge(c5, on="Model")
+        m[f"Delta_R2_{suffix}"] = m[f"R2_C5_{suffix}"] - m[f"R2_C3_{suffix}"]
+        m[f"Delta_RMSE%_{suffix}"] = m[f"RMSE%_C5_{suffix}"] - m[f"RMSE%_C3_{suffix}"]
         return m[
             [
                 "Model",
                 f"R2_C3_{suffix}",
-                f"R2_C4_{suffix}",
+                f"R2_C5_{suffix}",
                 f"Delta_R2_{suffix}",
                 f"Delta_RMSE%_{suffix}",
             ]
@@ -248,7 +248,7 @@ def main() -> None:
 
     table7 = build_seasonality_ablation_table(df_wo, df_w)
     if not table7.empty:
-        table7.to_csv(TABLES_DIR / "table7_seasonality_ablation_c3_vs_c4.csv", index=False)
+        table7.to_csv(TABLES_DIR / "table7_seasonality_ablation_c3_vs_c5.csv", index=False)
 
     # Classical Forecasting Baselines (Table 8)
     baseline_preds = {}
@@ -299,8 +299,8 @@ def main() -> None:
             comparisons.append(("RF: C1 vs. C2 (preprocessing effect)", preds_wo[("C1", "RandomForest")], preds_wo[("C2", "RandomForest")]))
         if ("C2", "RandomForest") in preds_wo and ("C3", "RandomForest") in preds_wo:
             comparisons.append(("RF: C2 vs. C3 (zero-variance effect)", preds_wo[("C2", "RandomForest")], preds_wo[("C3", "RandomForest")]))
-        if ("C3", "RandomForest") in preds_wo and ("C4", "RandomForest") in preds_wo:
-            comparisons.append(("RF: C3 vs. C4 (seasonal/promotional ablation)", preds_wo[("C3", "RandomForest")], preds_wo[("C4", "RandomForest")]))
+        if ("C3", "RandomForest") in preds_wo and ("C5", "RandomForest") in preds_wo:
+            comparisons.append(("RF: C3 vs. C5 (seasonal/promotional ablation)", preds_wo[("C3", "RandomForest")], preds_wo[("C5", "RandomForest")]))
         if ("C3", "RandomForest") in preds_w and ("C3", "ExtraTrees") in preds_w:
             comparisons.append(("RF vs. ET, With Customers (ablation)", preds_w[("C3", "RandomForest")], preds_w[("C3", "ExtraTrees")]))
 

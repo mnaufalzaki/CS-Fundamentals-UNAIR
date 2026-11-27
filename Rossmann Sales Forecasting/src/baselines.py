@@ -147,7 +147,14 @@ def evaluate_classical_baselines(
     """Evaluate Ridge Regression, Seasonal-Naive, and per-store ETS under C3 without Customers."""
     y_train_mean = float(train_df[TARGET_COL].mean())
     y_val = val_df[TARGET_COL].values
-    tscv = TimeSeriesSplit(n_splits=n_splits)
+    unique_dates = np.sort(df[DATE_COL].unique())
+    date_folds = [
+        (
+            np.flatnonzero(df[DATE_COL].isin(unique_dates[tr_dates]).to_numpy()),
+            np.flatnonzero(df[DATE_COL].isin(unique_dates[te_dates]).to_numpy()),
+        )
+        for tr_dates, te_dates in TimeSeriesSplit(n_splits=n_splits).split(unique_dates)
+    ]
 
     results = []
     val_predictions: Dict[str, np.ndarray] = {}
@@ -172,7 +179,7 @@ def evaluate_classical_baselines(
     ridge_cv_scores = []
     X_all = df[feature_cols]
     y_all = df[TARGET_COL].values
-    for tr_idx, te_idx in tscv.split(X_all):
+    for tr_idx, te_idx in date_folds:
         pipe_cv = Pipeline(
             steps=[
                 ("preprocessor", build_preprocessor(X_all.iloc[tr_idx], config_name="C3")),
@@ -198,7 +205,7 @@ def evaluate_classical_baselines(
     sn_metrics = compute_metrics(y_val, sn_pred, y_train_mean)
 
     sn_cv_scores = []
-    for tr_idx, te_idx in tscv.split(df):
+    for tr_idx, te_idx in date_folds:
         tr_fold = df.iloc[tr_idx]
         te_fold = df.iloc[te_idx]
         pred_cv = predict_seasonal_naive(tr_fold, te_fold)
@@ -220,7 +227,7 @@ def evaluate_classical_baselines(
         ets_metrics = compute_metrics(y_val, ets_pred, y_train_mean)
 
         ets_cv_scores = []
-        for tr_idx, te_idx in tscv.split(df):
+        for tr_idx, te_idx in date_folds:
             tr_fold = df.iloc[tr_idx].reset_index(drop=True)
             te_fold = df.iloc[te_idx].reset_index(drop=True)
             pred_cv = predict_ets_per_store(tr_fold, te_fold)

@@ -33,8 +33,15 @@ def load_rossmann_data(
             f"Expected train.csv and store.csv in {data_dir}."
         )
 
-    train_df = pd.read_csv(train_path, low_memory=False)
-    store_df = pd.read_csv(store_path, low_memory=False)
+    # The supplied CSVs use ';'; original Kaggle CSVs use ','.
+    def read_csv(path: Path) -> pd.DataFrame:
+        with path.open(encoding="utf-8-sig") as source:
+            header = source.readline()
+        separator = ";" if header.count(";") > header.count(",") else ","
+        return pd.read_csv(path, sep=separator, low_memory=False)
+
+    train_df = read_csv(train_path)
+    store_df = read_csv(store_path)
 
     # Merge historical sales with store metadata on Store identifier
     df = train_df.merge(store_df, on=STORE_COL, how="left")
@@ -44,10 +51,12 @@ def load_rossmann_data(
         df["StateHoliday"] = df["StateHoliday"].astype(str)
 
     # Parse Date and sort chronologically (with Store as deterministic tie-breaker)
-    df[DATE_COL] = pd.to_datetime(df[DATE_COL])
+    date_sample = str(df[DATE_COL].iloc[0])
+    date_format = "%d/%m/%Y" if "/" in date_sample else "%Y-%m-%d"
+    df[DATE_COL] = pd.to_datetime(df[DATE_COL], format=date_format, errors="raise")
     df = df.sort_values([DATE_COL, STORE_COL]).reset_index(drop=True)
 
-    # Filter closed stores and zero-sales days (matches Rossmann standard & paper's y_bar_train)
+    # Project choice: evaluate sales on operational days with positive sales.
     if filter_open_positive:
         df = df[(df["Open"] == 1) & (df[TARGET_COL] > 0)].reset_index(drop=True)
 
@@ -70,8 +79,14 @@ def chronological_train_val_split(
     df: pd.DataFrame,
     test_ratio: float = 0.20,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Perform a fixed chronological 80/20 split preserving temporal order."""
+    """Split approximately 80/20 without placing the same date on both sides."""
+    if not 0 < test_ratio < 1 or len(df) < 2:
+        raise ValueError("test_ratio must be between 0 and 1, with at least two rows.")
     split_idx = int(len(df) * (1.0 - test_ratio))
+    cutoff_date = df.iloc[split_idx][DATE_COL]
+    split_idx = int(df[DATE_COL].searchsorted(cutoff_date, side="left"))
+    if split_idx == 0:
+        raise ValueError("Insufficient unique dates for a chronological split.")
     train_df = df.iloc[:split_idx].copy().reset_index(drop=True)
     val_df = df.iloc[split_idx:].copy().reset_index(drop=True)
     return train_df, val_df
